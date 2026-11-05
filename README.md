@@ -27,6 +27,14 @@ render; the **block-editor preview uses the REST API** and is not filtered. In t
 on the front end only today-or-later events show. This is expected; the front end is
 authoritative. A future improvement could replicate the date filter on the REST/editor side.
 
+### Caching implications (no cache code added)
+Upcoming/Recent membership is evaluated at render time with `current_time()` in the site
+timezone, so it changes at the site's local midnight. Stock WordPress does not persist
+Query-Loop results in cache, so there is no staleness now. **If a full-page cache plugin is
+added later**, a page cached "yesterday" could show a just-expired/became-recent event until
+the cache clears; a page-cache TTL of 24h or a purge on post save (`clean_post_cache` already
+fires) would be the fix. Deliberately no cache handling is added at this stage.
+
 ## Architecture
 
 | Concern | Implementation |
@@ -52,9 +60,28 @@ An event flows through three states, each a separate Query Loop surface:
    `display_until` (descending).
 3. **Archive** — the native `events` category archive; shows everything (no date filter).
 
-**Default display window:** if `display_until` is empty, it is calculated as
-`event_date + 7 days` *at save time* (constant `STP_EVENTS_DEFAULT_DISPLAY_WINDOW`,
-editable via `wp-config`). Editors can override by setting a value.
+**Default display window & automatic/manual distinction:** Display until is either
+**Automatic** (the plugin computes `event_date + 7 days`, constant
+`STP_EVENTS_DEFAULT_DISPLAY_WINDOW`, readable via `define()`/`wp-config`) or **Manual**
+(an editor picks a fixed date). A post-meta flag (`_stp_events_display_auto`) records which
+mode is in effect:
+
+- **Automatic** — Display until always **follows the event date**: if the event is moved,
+  the display-until follows to the new date + 7 days. This is the default for any event with
+  a date and no fixed value.
+- **Manual** — Display until is **frozen**: moving the event date leaves it untouched.
+  Set by unchecking "Automatic" in the editor and picking a date.
+- **Editor**: in the "Event dates" box, checking *Automatic* (default) clears the until field
+  so it follows the date; unchecking it enables a date picker and freezes the value. To move
+  a custom date back to automatic, check Automatic again.
+- **Legacy**: posts that already carry `display_until` = the computed default are adopted as
+  Automatic on their next save; anything else becomes Manual.
+
+All three save channels (editor form, REST, WP-CLI) run the same reconcile on save so the
+automatic/manual behaviour holds regardless of how the event is updated. One note: with the
+REST API, explicitly making an event Manual requires setting both `display_until` and
+`_stp_events_display_auto` to `"0"`; the editor GUI remains the primary, simplest way to
+switch between Automatic and Manual.
 
 ### Front-end date filtering
 The standard core **Query Loop block** is used everywhere (via registered block

@@ -7,25 +7,27 @@
  * date-relative meta_query on the FRONT END. The editor preview uses the REST
  * API and is not affected by that filter, so it shows a broader, unordered
  * set — a known and documented difference (see the plugin README).
+ *
+ * Note: this calls wp.blocks.registerBlockVariation (accepts an array of
+ * variations); registerBlockTypeVariation does not exist. Verified against the
+ * installed core.
  */
 ( function ( wp ) {
-	const { registerBlockTypeVariation } = wp.blocks;
+	const { registerBlockVariation } = wp.blocks;
 
 	const baseQuery = {
 		postType: 'post',
 		inherit: false,
 		perPage: 8,
-		order: 'ASC',
 		orderBy: 'meta_value',
 		metaKey: 'event_date',
 	};
 
-	registerBlockTypeVariation( 'core/query', [
+	registerBlockVariation( 'core/query', [
 		{
 			name: 'stp-events/upcoming',
 			title: 'Upcoming Events',
 			description: 'Events with an event date today or later, soonest first.',
-			category: 'stp-events',
 			attributes: {
 				query: Object.assign( {}, baseQuery, { stpSurface: 'upcoming', order: 'ASC' } ),
 			},
@@ -34,7 +36,6 @@
 			name: 'stp-events/recent',
 			title: 'Recent Parish Activity',
 			description: 'Recently completed events still within their display-until window, newest first.',
-			category: 'stp-events',
 			attributes: {
 				query: Object.assign( {}, baseQuery, { stpSurface: 'recent', order: 'DESC' } ),
 			},

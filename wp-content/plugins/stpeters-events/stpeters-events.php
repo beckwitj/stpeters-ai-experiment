@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       St. Peter's Events
- * Description:       Event metadata and date-based queries for St. Peter's Anglican Church, Erindale. Registers event_date and display_until post meta, registers Query Loop block variations, applies a save-time default display window, and injects date-relative filtering on the front end so events flow Upcoming -> Recent Parish Activity -> Archive.
- * Version:           0.2.0
+ * Description:       Event metadata and date-based queries for St. Peter's Anglican Church, Erindale. Registers event_date and display_until post meta with an automatic/manual "display until" distinction, registers Query Loop block variations, and injects date-relative filtering on the front end so events flow Upcoming -> Recent Parish Activity -> Archive.
+ * Version:           0.3.0
  * Author:            St. Peter's Anglican Church
  * Text Domain:       stpeters-events
  * Requires at least: 6.7
@@ -15,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * How many days after the event an announcement stays in "Recent Parish
- * Activity" when no explicit display_until is set. Editable via the
- * STP_EVENTS_DEFAULT_DISPLAY_WINDOW constant (0 disables the default window).
+ * Activity" when Display until is Automatic. Editable via the
+ * STP_EVENTS_DEFAULT_DISPLAY_WINDOW constant (0 disables the automatic window).
  */
 if ( ! defined( 'STP_EVENTS_DEFAULT_DISPLAY_WINDOW' ) ) {
 	define( 'STP_EVENTS_DEFAULT_DISPLAY_WINDOW', 7 );
@@ -29,6 +29,9 @@ if ( ! defined( 'STP_EVENTS_CATEGORY' ) ) {
 	define( 'STP_EVENTS_CATEGORY', 'events' );
 }
 
+/** Meta key holding the automatic/manual flag for display_until. */
+define( 'STP_EVENTS_AUTO_FLAG', '_stp_events_display_auto' );
+
 /**
  * Sanitize a value to a YYYY-MM-DD date string, or empty string.
  */
@@ -40,27 +43,144 @@ function stp_events_sanitize_date( $value ) {
 }
 
 /**
- * Register the two event date fields as post meta (single, REST-visible so the
- * block editor and block bindings can use them).
+ * The automatic display-until for an event date, or '' when auto is disabled.
+ *
+ * @param string $event_date YYYY-MM-DD.
+ * @return string
+ */
+function stp_events_compute_auto_until( $event_date ) {
+	$window = (int) STP_EVENTS_DEFAULT_DISPLAY_WINDOW;
+	if ( $window <= 0 || '' === $event_date ) {
+		return '';
+	}
+	return ( new DateTimeImmutable( $event_date ) )->modify( '+' . $window . ' days' )->format( 'Y-m-d' );
+}
+
+/**
+ * Register the event date fields and the auto flag as post meta.
  */
 function stp_events_register_meta() {
-	foreach ( array( 'event_date', 'display_until' ) as $key ) {
-		register_post_meta(
-			'post',
-			$key,
-			array(
-				'type'              => 'string',
-				'single'            => true,
-				'sanitize_callback' => 'stp_events_sanitize_date',
-				'auth_callback'     => function () {
-					return current_user_can( 'edit_posts' );
-				},
-				'show_in_rest'      => true,
-			)
-		);
-	}
+	register_post_meta(
+		'post',
+		'event_date',
+		array(
+			'type'              => 'string',
+			'single'            => true,
+			'sanitize_callback' => 'stp_events_sanitize_date',
+			'auth_callback'     => function () {
+				return current_user_can( 'edit_posts' );
+			},
+			'show_in_rest'      => true,
+		)
+	);
+	register_post_meta(
+		'post',
+		'display_until',
+		array(
+			'type'              => 'string',
+			'single'            => true,
+			'sanitize_callback' => 'stp_events_sanitize_date',
+			'auth_callback'     => function () {
+				return current_user_can( 'edit_posts' );
+			},
+			'show_in_rest'      => true,
+		)
+	);
+	register_post_meta(
+		'post',
+		STP_EVENTS_AUTO_FLAG,
+		array(
+			'type'              => 'string',
+			'single'            => true,
+			// No 'default': an unset flag must read as '' (not '0') so that
+			// legacy events without the flag are migrated by reconcile_display.
+			'sanitize_callback' => function ( $value ) {
+				return ( '1' === $value ) ? '1' : '0';
+			},
+			'auth_callback'     => function () {
+				return current_user_can( 'edit_posts' );
+			},
+			'show_in_rest'      => true,
+		)
+	);
 }
 add_action( 'init', 'stp_events_register_meta' );
+
+/**
+ * Reconcile display_until with the automatic/manual flag.
+ *
+ * Single source of truth, safe to call on any save channel (editor form,
+ * REST, or WP-CLI):
+ *  - Automatic (flag "1"): display_until always follows the event date.
+ *  - Manual (flag "0"): display_until is left untouched.
+ *  - No display_until yet -> becomes Automatic and is computed.
+ *  - Legacy post (no flag stored) whose display_until equals the default is
+ *    adopted as Automatic; anything else is treated as Manual.
+ *
+ * @param int $post_id Post ID.
+ */
+function stp_events_reconcile_display( $post_id ) {
+	if ( 'post' !== get_post_type( $post_id ) || wp_is_post_revision( $post_id ) ) {
+		return;
+	}
+
+	$event = (string) get_post_meta( $post_id, 'event_date', true );
+	$until = (string) get_post_meta( $post_id, 'display_until', true );
+	$auto  = (string) get_post_meta( $post_id, STP_EVENTS_AUTO_FLAG, true );
+
+	if ( '' === $event ) {
+		if ( '' !== $until ) {
+			delete_post_meta( $post_id, 'display_until' );
+		}
+		return;
+	}
+
+	$computed = stp_events_compute_auto_until( $event );
+	if ( '' === $computed ) {
+		return; // Automatic window disabled; leave any manual value alone.
+	}
+
+	if ( '' === $until ) {
+		update_post_meta( $post_id, 'display_until', $computed );
+		update_post_meta( $post_id, STP_EVENTS_AUTO_FLAG, '1' );
+		return;
+	}
+
+	if ( '1' === $auto ) {
+		if ( $until !== $computed ) {
+			update_post_meta( $post_id, 'display_until', $computed );
+		}
+		update_post_meta( $post_id, STP_EVENTS_AUTO_FLAG, '1' );
+		return;
+	}
+
+	// Flag is '0' (explicit manual) or '' (legacy).
+	if ( '' === $auto && $until === $computed ) {
+		// Legacy value that already equals the default -> adopt as Automatic.
+		update_post_meta( $post_id, STP_EVENTS_AUTO_FLAG, '1' );
+		return;
+	}
+
+	// Manual: preserve the value and mark it explicitly.
+	if ( '0' !== $auto ) {
+		update_post_meta( $post_id, STP_EVENTS_AUTO_FLAG, '0' );
+	}
+}
+add_action( 'save_post', 'stp_events_reconcile_display', 20, 1 );
+
+/**
+ * Reconcile again after the REST API has applied post meta (the REST controller
+ * applies meta after save_post fires, so the save_post pass may run on a stale
+ * value for REST-updated events).
+ *
+ * @param WP_Post $post Updated post.
+ */
+function stp_events_rest_reconcile( $post ) {
+	if ( $post instanceof WP_Post ) {
+		stp_events_reconcile_display( $post->ID );
+	}
+}
+add_action( 'rest_after_insert_post', 'stp_events_rest_reconcile', 10, 1 );
 
 /**
  * Render the "Event dates" meta box in the post editor.
@@ -69,25 +189,54 @@ add_action( 'init', 'stp_events_register_meta' );
  */
 function stp_events_dates_meta_box( $post ) {
 	wp_nonce_field( 'stp_events_save_dates', 'stp_events_dates_nonce' );
-	$event_date   = get_post_meta( $post->ID, 'event_date', true );
-	$display_until = get_post_meta( $post->ID, 'display_until', true );
+	$event_date = (string) get_post_meta( $post->ID, 'event_date', true );
+	$until      = (string) get_post_meta( $post->ID, 'display_until', true );
+	$auto       = (string) get_post_meta( $post->ID, STP_EVENTS_AUTO_FLAG, true );
+	// Automatic when flagged, or when no value and an event date exists.
+	$is_auto  = ( '1' === $auto ) || ( '' === $until && '' !== $event_date );
+	$autotitle = $is_auto ? esc_attr( stp_events_compute_auto_until( $event_date ) ) : '';
 	?>
 	<p>
 		<label for="stp_event_date">
 			<strong><?php esc_html_e( 'Event date', 'stpeters-events' ); ?></strong>
 		</label><br />
 		<input type="date" id="stp_event_date" name="stp_event_date" value="<?php echo esc_attr( $event_date ); ?>" />
-		<span class="description"><?php esc_html_e( 'Date the event takes place.', 'stpeters-events' ); ?></span>
 	</p>
+
 	<p>
-		<label for="stp_display_until">
-			<strong><?php esc_html_e( 'Display until', 'stpeters-events' ); ?></strong>
+		<label>
+			<input type="checkbox" name="stp_display_auto" value="1" id="stp_display_auto" <?php checked( $is_auto ); ?> />
+			<strong><?php esc_html_e( 'Display until — Automatic', 'stpeters-events' ); ?></strong>
 		</label><br />
-		<input type="date" id="stp_display_until" name="stp_display_until" value="<?php echo esc_attr( $display_until ); ?>" />
-		<span class="description">
-			<?php esc_html_e( 'Keep visible in recent activity until this date. Leave blank for default (7 days after the event).', 'stpeters-events' ); ?>
+		<span class="description" id="stp_auto_note">
+			<?php
+			if ( '' !== $event_date ) {
+				echo esc_html( $is_auto ? sprintf( __( 'Shown as recent activity until %s (auto, follows the event date).', 'stpeters-events' ), $autotitle ) : '' );
+			}
+			?>
 		</span>
 	</p>
+
+	<p>
+		<label for="stp_display_until">
+			<?php esc_html_e( 'Or set a specific date:', 'stpeters-events' ); ?>
+		</label><br />
+		<input type="date" id="stp_display_until" name="stp_display_until" value="<?php echo esc_attr( $until ); ?>" <?php disabled( $is_auto ); ?> />
+		<span class="description"><?php esc_html_e( 'Uncheck Automatic, then pick a date to keep it visible until a fixed day.', 'stpeters-events' ); ?></span>
+	</p>
+	<script>
+	( function () {
+		var box = document.getElementById( 'stp_event_date' ).closest( '.postbox' ) || document;
+		var auto = box.querySelector( '#stp_display_auto' );
+		var until = box.querySelector( '#stp_display_until' );
+		if ( ! auto || ! until ) { return; }
+		function sync() {
+			until.disabled = auto.checked;
+			if ( auto.checked ) { until.value = ''; }
+		}
+		auto.addEventListener( 'change', sync );
+	} )();
+	</script>
 	<?php
 }
 add_action( 'add_meta_boxes', function () {
@@ -95,13 +244,7 @@ add_action( 'add_meta_boxes', function () {
 } );
 
 /**
- * Apply the event dates on save.
- *
- * - Persists the two fields from the editor form when submitted.
- * - Applies the save-time default display window: if an event has an
- *   event_date but no display_until, display_until is computed as
- *   event_date + STP_EVENTS_DEFAULT_DISPLAY_WINDOW and saved.
- * - Editors override simply by entering a display_until.
+ * Persist the two date fields and the automatic flag from the editor form.
  *
  * @param int     $post_id Post ID.
  * @param WP_Post $post    Post object.
@@ -120,9 +263,6 @@ function stp_events_save_dates( $post_id, $post ) {
 		return;
 	}
 
-	// Persist the two fields when submitted from the editor form. Editorial
-	// overrides win here; the default window is applied by the separate hook
-	// below for any save that results in a date but no display_until.
 	if ( isset( $_POST['stp_event_date'] ) ) {
 		$event_date = stp_events_sanitize_date( wp_unslash( $_POST['stp_event_date'] ) );
 		if ( '' !== $event_date ) {
@@ -131,67 +271,35 @@ function stp_events_save_dates( $post_id, $post ) {
 			delete_post_meta( $post_id, 'event_date' );
 		}
 	}
-	if ( isset( $_POST['stp_display_until'] ) ) {
-		$display_until = stp_events_sanitize_date( wp_unslash( $_POST['stp_display_until'] ) );
-		if ( '' !== $display_until ) {
-			update_post_meta( $post_id, 'display_until', $display_until );
+
+	$is_auto = isset( $_POST['stp_display_auto'] ) && '1' === $_POST['stp_display_auto'];
+
+	if ( $is_auto ) {
+		// Automatic: drop any typed value so reconcile recomputes from the date.
+		delete_post_meta( $post_id, 'display_until' );
+		update_post_meta( $post_id, STP_EVENTS_AUTO_FLAG, '1' );
+	} else {
+		// Manual: persist the typed value (or none) and mark it manual.
+		$until = isset( $_POST['stp_display_until'] ) ? stp_events_sanitize_date( wp_unslash( $_POST['stp_display_until'] ) ) : '';
+		if ( '' !== $until ) {
+			update_post_meta( $post_id, 'display_until', $until );
 		} else {
 			delete_post_meta( $post_id, 'display_until' );
 		}
+		update_post_meta( $post_id, STP_EVENTS_AUTO_FLAG, '0' );
 	}
 }
 add_action( 'save_post', 'stp_events_save_dates', 10, 2 );
 
 /**
- * Applies the save-time default display window on ANY save (editor form,
- * REST, or WP-CLI) when a post has an event_date but no display_until.
- * Editors override by setting display_until explicitly. An editor who wants an
- * announcement to stay visible indefinitely sets a far-future display_until.
- *
- * @param int     $post_id Post ID.
- * @param WP_Post $post    Post object.
- */
-function stp_events_apply_default_display( $post_id, $post ) {
-	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-		return;
-	}
-	if ( 'post' !== $post->post_type || wp_is_post_revision( $post_id ) ) {
-		return;
-	}
-
-	$event_date    = (string) get_post_meta( $post_id, 'event_date', true );
-	$display_until = (string) get_post_meta( $post_id, 'display_until', true );
-
-	if ( '' === $event_date ) {
-		return;
-	}
-	if ( '' !== $display_until ) {
-		return; // Editorial override already present.
-	}
-
-	$default_window = (int) STP_EVENTS_DEFAULT_DISPLAY_WINDOW;
-	if ( 0 === $default_window ) {
-		return;
-	}
-	$computed = ( new DateTimeImmutable( $event_date ) )->modify( '+' . $default_window . ' days' )->format( 'Y-m-d' );
-	update_post_meta( $post_id, 'display_until', $computed );
-}
-add_action( 'save_post', 'stp_events_apply_default_display', 20, 2 );
-
-/**
- * Register "Upcoming Events" and "Recent Parish Activity" Query Loop block
- * variations in the block editor.
+ * Enqueue the block editor script that registers the Query Loop variations.
  */
 function stp_events_register_editor_assets() {
-	$asset = array(
-		'dependencies' => array( 'wp-blocks' ),
-		'version'      => '0.2.0',
-	);
 	wp_enqueue_script(
 		'stp-events-query-variations',
 		plugin_dir_url( __FILE__ ) . 'assets/query-variations.js',
-		$asset['dependencies'],
-		$asset['version'],
+		array( 'wp-blocks' ),
+		'0.3.0',
 		true
 	);
 }
@@ -221,7 +329,6 @@ function stp_events_query_loop_vars( $query, $block ) {
 
 	$today = current_time( 'Y-m-d' ); // Site timezone.
 
-	// Scope to the events category (by slug, portable across IDs).
 	$query['post_type'] = 'post';
 	if ( ! isset( $query['posts_per_page'] ) ) {
 		$query['posts_per_page'] = 10;
