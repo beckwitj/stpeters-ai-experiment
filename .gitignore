@@ -1,0 +1,20 @@
+# Ignore everything by default; re-include only our custom components & docs.
+/*
+!/README.md
+!/.gitignore
+
+# --- wp-content: keep only our two custom directories ---
+!/wp-content/
+/wp-content/*
+!/wp-content/plugins/
+!/wp-content/themes/
+/wp-content/plugins/*
+!/wp-content/plugins/stpeters-events/
+/wp-content/themes/*
+!/wp-content/themes/stpeters-anglican/
+
+# Everything below is implicitly ignored by the /* rule above, listed for clarity:
+# wp-admin/, wp-includes/, wp-config.php (contains DB credentials), license.txt,
+# readme.html, index.php, wp-*.php, .htaccess
+# wp-content/database/* (SQLite), wp-content/uploads/*, wp-content/mu-plugins/*,
+# mu-plugins/99-studio-loader.php, db.php, all non-custom themes & plugins.
