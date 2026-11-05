@@ -11,3 +11,148 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: stpeters-anglican
 Tags: full-site-editing, block-patterns, block-styles, wide-blocks, accessibility-ready, style-variations
 */
+
+/* === fonts (self-hosted, Latin subset) === */
+@font-face {
+	font-family: 'Fraunces';
+	font-style: normal;
+	font-weight: 400 700;
+	font-display: swap;
+	src: url('assets/fonts/fraunces.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Source Sans 3';
+	font-style: normal;
+	font-weight: 400 600;
+	font-display: swap;
+	src: url('assets/fonts/sourcesans3.woff2') format('woff2');
+}
+
+/* === reset (do not remove these two rules — see block-content skill) === */
+.wp-site-blocks > * + * {
+	margin-block-start: 0;
+}
+
+.wp-site-blocks main {
+	padding-block-start: 0;
+	padding-block-end: 0;
+}
+
+/* === site header === */
+.site-header { background: var(--wp--preset--color--paper); }
+.site-header-inner {
+	min-height: 76px;
+	gap: 16px;
+}
+.site-brand {
+	font-family: var(--wp--preset--font-family--display);
+	font-size: 1.45rem;
+	font-weight: 600;
+	line-height: 1.1;
+	letter-spacing: -0.01em;
+	color: var(--wp--preset--color--ink);
+}
+.site-header .wp-block-button__link {
+	padding: 10px 22px;
+	font-size: 1rem;
+}
+
+/* === eyebrow label === */
+.stp-eyebrow {
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: #8f4f1e;
+	margin-bottom: 0.85rem !important;
+}
+.stp-eyebrow--on-dark {
+	color: var(--wp--preset--color--stone);
+}
+
+/* === card === */
+.is-style-card {
+	background: var(--wp--preset--color--surface);
+	border: 1px solid var(--wp--preset--color--stone);
+	border-radius: var(--wp--preset--spacing--30, 16px);
+	padding: clamp(22px, 3vw, 30px);
+	height: 100%;
+}
+.is-style-card .wp-block-group__inner-container {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+.is-style-card .wp-block-heading {
+	margin-top: 0;
+}
+.is-style-card .stp-card-link {
+	margin-top: auto;
+}
+.is-style-card .stp-card-link a {
+	font-weight: 600;
+	color: var(--wp--preset--color--evergreen);
+	text-decoration: underline;
+}
+
+/* === dark evergreen band === */
+.on-dark { color: var(--wp--preset--color--ivory); }
+.on-dark h1,
+.on-dark h2,
+.on-dark h3,
+.on-dark h4,
+.on-dark p,
+.on-dark a {
+	color: var(--wp--preset--color--ivory);
+}
+.on-dark .wp-block-button__link {
+	color: var(--wp--preset--color--evergreen);
+}
+.on-dark .stp-eyebrow {
+	color: var(--wp--preset--color--stone);
+}
+
+/* === hero: legible text on the evergreen overlay === */
+.hero-cover .wp-block-cover__inner-container {
+	color: var(--wp--preset--color--ivory);
+}
+.hero-cover h1,
+.hero-cover h2,
+.hero-cover .wp-block-heading {
+	color: var(--wp--preset--color--ivory);
+}
+.hero-cover p,
+.hero-cover a {
+	color: var(--wp--preset--color--ivory);
+}
+.hero-cover .wp-block-button__link {
+	color: var(--wp--preset--color--evergreen);
+}
+.hero-cover .stp-eyebrow {
+	color: var(--wp--preset--color--stone);
+}
+
+/* === activity list === */
+.activity-item {
+	padding-block: 16px;
+}
+.activity-item + .activity-item {
+	border-top: 1px solid var(--wp--preset--color--stone);
+}
+.activity-item .wp-block-heading {
+	margin-bottom: 4px;
+}
+.activity-item .activity-date {
+	font-size: 0.9rem;
+	color: var(--wp--preset--color--evergreen);
+	margin: 0;
+}
+
+/* === mobile === */
+@media (max-width: 781px) {
+	.site-header-inner {
+		flex-wrap: wrap;
+		padding-block: 14px;
+	}
+}

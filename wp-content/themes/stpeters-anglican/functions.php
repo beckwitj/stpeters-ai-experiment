@@ -25,3 +25,21 @@ add_action( 'wp_enqueue_scripts', function () {
 add_action( 'after_setup_theme', function () {
 	add_editor_style( 'style.css' );
 } );
+
+// Reusable block style variations.
+add_action( 'init', function () {
+	register_block_style(
+		'core/group',
+		array(
+			'name'  => 'card',
+			'label' => 'Card',
+		)
+	);
+	register_block_style(
+		'core/group',
+		array(
+			'name'  => 'eyebrow',
+			'label' => 'Eyebrow label',
+		)
+	);
+} );
