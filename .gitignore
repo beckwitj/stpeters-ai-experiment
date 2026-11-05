@@ -10,6 +10,8 @@
 !/wp-content/themes/
 /wp-content/plugins/*
 !/wp-content/plugins/stpeters-events/
+# Scratch content for import tests; not source.
+/wp-content/plugins/stpeters-events/tmp/
 /wp-content/themes/*
 !/wp-content/themes/stpeters-anglican/
 

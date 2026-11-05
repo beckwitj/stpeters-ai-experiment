@@ -5,8 +5,27 @@ accessible, FSE-based redesign for St. Peter's Anglican Church, Mississauga.
 
 ## Status
 
-This is a **working events prototype** (Stage 2). The homepage and broader content are
-**not yet built** — they follow only after the events workflow is reviewed.
+This is a **working events prototype (Stage 2 complete)**. The homepage and broader content are
+**not yet built** — they follow only after this events workflow is reviewed.
+
+Implemented and verified in Stage 2:
+
+- `event_date` and `display_until` post meta (editor date fields + save-time default).
+- Front-end date filtering for **Upcoming Events** and **Recent Parish Activity** via
+  `query_loop_block_query_vars`, exercised against this WordPress install.
+- Ordering by ISO dates uses **string** ordering (`orderby = meta_value`), **not**
+  `meta_value_num` — verified here that `meta_value_num` numeric-casts `2026-11-30` to
+  `2026` and mis-sorts within a year.
+- A test display page (`/events-test/`, page "Events Prototype Test") with two Query Loop
+  blocks and seven fictional events demonstrating the full Upcoming → Recent → Archive
+  lifecycle (dates were anchored to the site's "today", 2026-11-05).
+
+### Known limitation — editor preview vs. front end
+Per core's own documentation, `query_loop_block_query_vars` only affects the **front-end**
+render; the **block-editor preview uses the REST API** and is not filtered. In the editor, the
+"Upcoming Events" variation therefore previews **all** events (expired ones included), while
+on the front end only today-or-later events show. This is expected; the front end is
+authoritative. A future improvement could replicate the date filter on the REST/editor side.
 
 ## Architecture
 
