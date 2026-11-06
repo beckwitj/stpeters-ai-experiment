@@ -192,6 +192,14 @@ Tags: full-site-editing, block-patterns, block-styles, wide-blocks, accessibilit
 	text-underline-offset: 0.12em;
 }
 
+/* Nav-card grid follows the shared root gutter so the four cards sit at the
+   same inset as the activity list and footer (padding lives here, not inline
+   on the block). Targets only the card grid, not the footer's alignwide columns. */
+.wp-block-columns.alignwide:has(.is-style-card) {
+	padding-inline: clamp(1.25rem, 4vw, 2.5rem);
+	box-sizing: border-box;
+}
+
 /* === mobile === */
 @media (max-width: 781px) {
 	.site-header-inner {

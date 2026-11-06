@@ -148,14 +148,19 @@ the page its structure. Generous vertical padding (spacing.lg/xl) so no section 
 
 Horizontally, full-bleed sections keep their tint (or image) to the viewport edge while the
 content inside is inset with the **root gutter `clamp(1.25rem, 4vw, 2.5rem)`** — 20px at a
-390px phone, ~31px at a tablet. Two full-bleed bands get this treatment in CSS:
+390px phone, ~31px at a tablet. Three full-bleed blocks apply this in CSS (matching each
+other exactly at every width, so cards and lists stay aligned):
 
+- **Nav-card grid** — the four-way “Worship / Plan your visit / Events / Stories” card
+  columns carry the root gutter (targeted with `.wp-block-columns.alignwide:has(.is-style-card)`;
+  the footer has its own `.alignwide` rule). Inline spacing stays OUT of the block so the
+  gutter scales with the viewport like every other section.
 - **Parish-life activity list** — the Query Loop is a centered `66rem` (1056px) content
   column with the root-gutter padding, and each card fills it (no separate narrow cap), so
   titles and dates never touch the edge on mobile and cards unlock a comfortable ~976px on
   wide desktops instead of hovering in a narrow centered bubble.
 - **Footer** — the three column groups share the root gutter on mobile (`@media` up to
-  781px) so contact, the flag/"All are welcome", and the social/connect links are all inset
+  781px) so contact, the flag/“All are welcome”, and the social/connect links are all inset
   consistently; on desktop the columns center within the wide 1180px row.
 
 The **hero** uses a **content-aware minimum height, not a rigid value**: `56vh` on mobile
