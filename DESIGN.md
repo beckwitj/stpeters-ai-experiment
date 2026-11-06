@@ -135,6 +135,11 @@ Rules of use:
 - **Large > medium > body**: a heading, or anything that must lead (like the Sunday service
   times), always sits at or above the Large tier so it reads clearly against plain body
 element text. Body stays in Medium; meta/eyebrows in Small.
+- **Eyebrows (small tier) are used sparingly, and only where they add context a heading
+doesn't** — e.g. the hero's "Anglican parish · Erindale, Mississauga" (what/where) above the
+  welcome headline. Section labels that merely restate their own heading are omitted: the
+  Worship and Parish-life eyebrows were removed because "Sunday worship" / "Parish life"
+  duplicated the headings below them. Restraint is the welcome.
 - Nothing renders below 18px for body-tier content on a standard 16px root.
 - The huge floor (2.5rem / 40px) was chosen so the hero headline wraps to two comfortable
   lines inside the cover's horizontal padding even at a 320px viewport, and its ceiling
