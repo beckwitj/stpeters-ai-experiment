@@ -29,7 +29,7 @@ spacing:
   xl: 96px
 rounded:
   sm: 8px
-  md: 16px
+  md: 20px
   full: 999px
 components:
   button-primary:
@@ -47,7 +47,7 @@ components:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
     rounded: "{rounded.md}"
-    padding: "28px"
+    padding: "clamp(22px, 3vw, 30px)"
 imagery:
   overlay: "#1F4E79"
 ---
@@ -167,6 +167,17 @@ The **hero** uses a **content-aware minimum height, not a rigid value**: `56vh` 
 (kept), and `clamp(400px, 40vh, 480px)` from 900px up — so it lands in the 400-480px band on
 a typical 1366px-wide desktop, never clips the heading + intro + CTA when text scales up or
 zooms in, and grows freely with its content.
+
+### Design tokens vs the build
+
+The frontmatter `spacing.*` scale is an *editorial baseline*, not a promise of exact rendered
+values: the build expresses almost every gap and section rhythm as a responsive `clamp()`
+(e.g. section padding `clamp(3rem, 8vw, 5.5rem)`, root gutter `clamp(1.25rem, 4vw, 2.5rem)`),
+which the fixed `xs … xl` figures cannot express. Where a component token is concrete its value
+matches the CSS: `components.card.padding` is the live `clamp(22px, 3vw, 30px)` (22px mobile →
+30px desktop) and `rounded.md` is the live card radius `20px` (`var(--wp--preset--spacing--30)`).
+If you rebuild from this file, prefer the clamp expressions and the Components block over the
+top-level `spacing` numbers.
 
 ## Elevation & Depth
 
