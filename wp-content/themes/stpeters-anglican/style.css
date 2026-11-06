@@ -145,14 +145,16 @@ Tags: full-site-editing, block-patterns, block-styles, wide-blocks, accessibilit
 }
 
 /* === activity list === */
+/* Query Loop grows to a comfortable centered content column (~66rem),
+   and each card fills it rather than capping at a narrow 44rem. */
 .wp-block-query {
-	max-width: 74rem;
+	max-width: 66rem;
 	margin-inline: auto;
 	padding-inline: clamp(1.25rem, 4vw, 2.5rem);
 	box-sizing: border-box;
 }
 .activity-item {
-	max-width: 44rem;
+	max-width: 100%;
 	margin-inline: auto;
 	padding-block: 20px;
 }

@@ -150,9 +150,10 @@ Horizontally, full-bleed sections keep their tint (or image) to the viewport edg
 content inside is inset with the **root gutter `clamp(1.25rem, 4vw, 2.5rem)`** — 20px at a
 390px phone, ~31px at a tablet. Two full-bleed bands get this treatment in CSS:
 
-- **Parish-life activity list** — the Query Loop container is a centered `74rem` (1184px)
-  column with that root-gutter padding, so event titles and dates never touch the edge on
-  mobile and stay a comfortable max width on wide desktops.
+- **Parish-life activity list** — the Query Loop is a centered `66rem` (1056px) content
+  column with the root-gutter padding, and each card fills it (no separate narrow cap), so
+  titles and dates never touch the edge on mobile and cards unlock a comfortable ~976px on
+  wide desktops instead of hovering in a narrow centered bubble.
 - **Footer** — the three column groups share the root gutter on mobile (`@media` up to
   781px) so contact, the flag/"All are welcome", and the social/connect links are all inset
   consistently; on desktop the columns center within the wide 1180px row.
