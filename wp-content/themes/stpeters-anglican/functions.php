@@ -43,3 +43,35 @@ add_action( 'init', function () {
 		)
 	);
 } );
+
+/**
+ * Format the bound event occurrence date (event_date) as a readable label.
+ *
+ * The Recent Parish Activity Query Loop binds the post's `event_date` meta to a
+ * `core/paragraph` with class `activity-date`; core resolves that binding with the
+ * correct loop post context (unlike a shortcode, which only sees the global post).
+ * We reformat the raw ISO date into a human-readable label.
+ *
+ * We display the occurrence date, not the post's publication date: for a
+ * recently-held event the question a visitor is really asking is "when did this
+ * happen?", and it keeps the Recent surface consistent with the Upcoming surface,
+ * which is also keyed to the occurrence date. The plugin stores the two dates
+ * separately; publication date is the announcement/editorial date and is not shown.
+ */
+add_filter( 'render_block', function ( $block_content, $parsed_block ) {
+	if ( ! is_string( $block_content ) ) {
+		return $block_content;
+	}
+	// Match the loop's bound date paragraph by class only (the binding's block
+	// metadata is not reliably present in attrs at this point).
+	if ( ! preg_match( '#<p[^>]*class="[^"]*activity-date[^"]*"[^>]*>(.*?)</p>#is', $block_content, $m ) ) {
+		return $block_content;
+	}
+	$raw = trim( wp_strip_all_tags( $m[1] ) );
+	if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $raw ) ) {
+		return $block_content;
+	}
+	$ts   = strtotime( $raw . ' 12:00:00 UTC' );
+	$date = ( false === $ts ) ? esc_html( $raw ) : esc_html( wp_date( 'F j, Y', $ts ) );
+	return '<p class="activity-date"><time datetime="' . esc_attr( $raw ) . '">' . $date . '</time></p>';
+}, 10, 2 );

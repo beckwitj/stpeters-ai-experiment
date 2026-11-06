@@ -152,18 +152,42 @@ Tags: full-site-editing, block-patterns, block-styles, wide-blocks, accessibilit
 	box-sizing: border-box;
 }
 .activity-item {
-	padding-block: 16px;
+	max-width: 44rem;
+	margin-inline: auto;
+	padding-block: 20px;
 }
 .activity-item + .activity-item {
 	border-top: 1px solid var(--wp--preset--color--stone);
 }
-.activity-item .wp-block-heading {
+.activity-body .wp-block-post-title {
 	margin-bottom: 4px;
 }
-.activity-item .activity-date {
+.activity-date {
 	font-size: var(--wp--preset--font-size--small);
 	color: var(--wp--preset--color--evergreen);
+	margin: 0 0 10px;
+}
+.activity-media {
+	min-width: 0;
+}
+.activity-thumb img {
+	width: 100%;
+	aspect-ratio: 3 / 2;
+	object-fit: cover;
+	border-radius: 12px;
+	display: block;
+}
+.activity-body .wp-block-post-excerpt p {
+	margin: 0 0 10px;
+}
+.wp-block-post-excerpt__more-text {
 	margin: 0;
+}
+.wp-block-post-excerpt__more-text a {
+	color: var(--wp--preset--color--evergreen);
+	font-weight: 600;
+	text-decoration: underline;
+	text-underline-offset: 0.12em;
 }
 
 /* === mobile === */
