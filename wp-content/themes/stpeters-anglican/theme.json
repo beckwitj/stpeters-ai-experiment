@@ -21,10 +21,10 @@
 			],
 			"fontSizes": [
 				{ "name": "Small", "slug": "small", "size": "0.95rem", "fluid": { "min": "0.9rem", "max": "1rem" } },
-				{ "name": "Medium", "slug": "medium", "size": "1.15rem" },
-				{ "name": "Large", "slug": "large", "size": "1.5rem" },
-				{ "name": "X-Large", "slug": "x-large", "size": "2.1rem" },
-				{ "name": "Huge", "slug": "huge", "size": "clamp(2.6rem, 6vw, 4.4rem)" }
+				{ "name": "Medium", "slug": "medium", "size": "1.15rem", "fluid": { "min": "1.125rem", "max": "1.25rem" } },
+				{ "name": "Large", "slug": "large", "size": "1.5rem", "fluid": { "min": "1.375rem", "max": "1.625rem" } },
+				{ "name": "X-Large", "slug": "x-large", "size": "2.125rem", "fluid": { "min": "1.75rem", "max": "2.375rem" } },
+				{ "name": "Huge", "slug": "huge", "size": "3.25rem", "fluid": { "min": "2.5rem", "max": "4rem" } }
 			],
 			"fluid": true
 		},

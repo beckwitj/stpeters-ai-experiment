@@ -144,7 +144,7 @@ Tags: full-site-editing, block-patterns, block-styles, wide-blocks, accessibilit
 	margin-bottom: 4px;
 }
 .activity-item .activity-date {
-	font-size: 0.9rem;
+	font-size: var(--wp--preset--font-size--small);
 	color: var(--wp--preset--color--evergreen);
 	margin: 0;
 }
