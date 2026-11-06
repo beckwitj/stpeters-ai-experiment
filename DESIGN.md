@@ -214,3 +214,11 @@ Gentle, if any. Respect `prefers-reduced-motion`; no autoplay or flashing.
 Warm, plain, inviting. Short sentences. "You" and "we" — direct and human. Words that belong:
 welcome, come as you are, worship, parish, community, Mississauga, Erindale. Avoid: jargon,
 formality, and any sense of being an announcements board.
+
+## Future Architectural Requirements
+
+### Single-source content and editorial syndication
+
+WordPress will be the authoritative source for parish stories, events and announcements. Content should be reusable across the website, weekly email and social media, with editorial discretion over what is distributed, when, and through which channels.
+
+Newsletter and social media integration will be considered after the core website and post-authoring workflow are established. Avoid unnecessary dependence on any particular commercial service.
