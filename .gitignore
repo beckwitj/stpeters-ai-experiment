@@ -1,6 +1,7 @@
 # Ignore everything by default; re-include only our custom components & docs.
 /*
 !/README.md
+!/DESIGN.md
 !/.gitignore
 
 # --- wp-content: keep only our two custom directories ---
