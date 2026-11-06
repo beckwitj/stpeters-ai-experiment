@@ -113,6 +113,17 @@ Tags: full-site-editing, block-patterns, block-styles, wide-blocks, accessibilit
 	color: var(--wp--preset--color--stone);
 }
 
+/* === hero: content-aware height, not a rigid value === */
+.hero-cover {
+	min-height: 56vh; /* mobile proportions kept */
+	aspect-ratio: auto;
+}
+@media (min-width: 900px) {
+	.hero-cover {
+		min-height: clamp(400px, 40vh, 480px); /* ~400-480px on desktop */
+	}
+}
+
 /* === hero: legible text on the evergreen overlay === */
 .hero-cover .wp-block-cover__inner-container {
 	color: var(--wp--preset--color--ivory);
@@ -134,6 +145,12 @@ Tags: full-site-editing, block-patterns, block-styles, wide-blocks, accessibilit
 }
 
 /* === activity list === */
+.wp-block-query {
+	max-width: 74rem;
+	margin-inline: auto;
+	padding-inline: clamp(1.25rem, 4vw, 2.5rem);
+	box-sizing: border-box;
+}
 .activity-item {
 	padding-block: 16px;
 }
@@ -154,6 +171,9 @@ Tags: full-site-editing, block-patterns, block-styles, wide-blocks, accessibilit
 	.site-header-inner {
 		flex-wrap: wrap;
 		padding-block: 14px;
+	}
+	.site-footer .wp-block-columns {
+		padding-inline: clamp(1.25rem, 4vw, 2.5rem);
 	}
 }
 

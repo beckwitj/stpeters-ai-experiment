@@ -146,6 +146,22 @@ Content column ~760px for text; wide rows up to ~1180px for card grids and image
 Sections are calm stacked bands; full-bleed evergreeen bands break the ivory rhythm and give
 the page its structure. Generous vertical padding (spacing.lg/xl) so no section feels crowded.
 
+Horizontally, full-bleed sections keep their tint (or image) to the viewport edge while the
+content inside is inset with the **root gutter `clamp(1.25rem, 4vw, 2.5rem)`** — 20px at a
+390px phone, ~31px at a tablet. Two full-bleed bands get this treatment in CSS:
+
+- **Parish-life activity list** — the Query Loop container is a centered `74rem` (1184px)
+  column with that root-gutter padding, so event titles and dates never touch the edge on
+  mobile and stay a comfortable max width on wide desktops.
+- **Footer** — the three column groups share the root gutter on mobile (`@media` up to
+  781px) so contact, the flag/"All are welcome", and the social/connect links are all inset
+  consistently; on desktop the columns center within the wide 1180px row.
+
+The **hero** uses a **content-aware minimum height, not a rigid value**: `56vh` on mobile
+(kept), and `clamp(400px, 40vh, 480px)` from 900px up — so it lands in the 400-480px band on
+a typical 1366px-wide desktop, never clips the heading + intro + CTA when text scales up or
+zooms in, and grows freely with its content.
+
 ## Elevation & Depth
 
 Low and calm. Cards sit on Surface with a soft shadow; the hero uses an evergreen overlay over
