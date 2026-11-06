@@ -156,3 +156,76 @@ Tags: full-site-editing, block-patterns, block-styles, wide-blocks, accessibilit
 		padding-block: 14px;
 	}
 }
+
+/* === footer (Palette 2 — warm neutral, deep-blue accents) === */
+.site-footer {
+	color: var(--wp--preset--color--ink);
+}
+.site-footer h2,
+.site-footer h3 {
+	color: var(--wp--preset--color--evergreen); /* deep parish blue accent */
+	margin-top: 0;
+}
+.site-statement {
+	font-family: var(--wp--preset--font-family--display);
+	font-size: var(--wp--preset--font-size--large);
+	line-height: 1.45;
+	color: var(--wp--preset--color--ink);
+	margin: 0 auto;
+	max-width: 30rem;
+}
+.site-footer-brand {
+	font-family: var(--wp--preset--font-family--display);
+	font-size: var(--wp--preset--font-size--large);
+	font-weight: 600;
+	color: var(--wp--preset--color--ink);
+	margin: 0 0 1rem;
+}
+.footer-col a {
+	color: var(--wp--preset--color--evergreen);
+	text-decoration: underline;
+	text-underline-offset: 0.12em;
+}
+.footer-col p {
+	margin-bottom: 1rem;
+}
+.footer-welcome {
+	margin-top: 0.5rem;
+}
+.site-flag img {
+	width: 150px;
+	height: auto;
+	display: block;
+	margin: 0 0 1.25rem;
+}
+.footer-directions {
+	max-width: 26rem;
+}
+.footer-copyright {
+	font-size: var(--wp--preset--font-size--small);
+	color: var(--wp--preset--color--ink);
+}
+.site-footer .site-footer-rule {
+	max-width: none;
+}
+
+/* === brand-blue accent (St. Peter's #3E8DDD) on paper === */
+.welcome-lead::after {
+	content: "";
+	display: block;
+	width: 3.5rem;
+	height: 4px;
+	margin: 1.1rem auto 0;
+	border-radius: 2px;
+	background: var(--wp--preset--color--brand);
+}
+
+/* === focus indicator (WCAG 2.2, >=3:1 vs adjacent) === */
+:focus-visible {
+	outline: 3px solid var(--wp--preset--color--brand);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+.site-footer :focus-visible {
+	outline-color: var(--wp--preset--color--evergreen);
+}

@@ -2,12 +2,14 @@
 name: St. Peter's Anglican Church, Erindale
 description: A welcoming, active Anglican parish in Mississauga.
 colors:
-  paper: "#F8F3EA"
-  surface: "#EFE6D4"
-  stone: "#E4D9C3"
+  paper: "#FBF7F0"
+  surface: "#F4ECE0"
+  stone: "#E5DAC6"
   ink: "#282219"
-  evergreen: "#2F4A3E"
+  evergreen: "#1F4E79"
   amber: "#A9652F"
+  brand: "#3E8DDD"
+  ivory: "#FDFBF4"
 typography:
   display:
     fontFamily: "'Fraunces', serif"
@@ -47,7 +49,7 @@ components:
     rounded: "{rounded.md}"
     padding: "28px"
 imagery:
-  overlay: "#2F4A3E"
+  overlay: "#1F4E79"
 ---
 
 # Design Direction — St. Peter's Anglican Church, Erindale
@@ -55,21 +57,55 @@ imagery:
 ## Overview
 
 A warm, welcoming, quietly reverent site for an active suburban parish. The palette is warm
-ivory and stone with a deep evergreen — a nod to the church's heritage and the surrounding
-nature of the Credit Valley — and one candle-amber accent used sparingly. Serif display type
-(Fraunces) gives the church voice and character; a humanist sans (Source Sans 3) keeps long
-text comfortably readable. The layout is calm and roomy, never a cluttered bulletin board:
-welcome first, worship up front, then clear paths in, and a modest glimpse of parish life.
+ivory and stone with a deep parish blue — a nod to the church's heritage and its place in
+Erindale — and one candle-amber accent used sparingly. Serif display type (Fraunces) gives
+the church voice and character; a humanist sans (Source Sans 3) keeps long text comfortably
+readable. The layout is calm and roomy, never a cluttered bulletin board: welcome first,
+worship up front, then clear paths in, and a modest glimpse of parish life.
+
+## Palette
+
+This file tracks **Palette 2 — Warm & Traditional** as the current theme. **Palette 1 —
+Contemporary & Forest** (warm ivory + deep evergreen) is retained below as the historical
+alternative that preceded it; the theme.json and homepage currently ship Palette 2. Git
+already tracks this file (`!/DESIGN.md` in `.gitignore`).
+
+### Palette 2 (current) — Warm & Traditional, deep parish blue
+
+- **Paper `#FBF7F0`** — the home ground: warm cream behind almost everything (body text
+  ink-on-paper = 14.75:1).
+- **Surface `#F4ECE0`** — a deeper warm cream for cards and the footer band (ink-on-surface
+  = 13.44:1; deep blue on surface = 7.39:1).
+- **Stone `#E5DAC6`** — muted taupe for thin rules and card borders (decorative only, ~1.2:1).
+- **Ink `#282219`** — warm near-black body text.
+- **Evergreen `#1F4E79`** — the slug now holds a **deep parish blue** (kept for continuity of
+  the token name). It is the primary: buttons, the hero overlay, the worship band, footer
+  headings and links. Ivory/white on it = 8.37:1 (AA).
+- **Brand `#3E8DDD`** — St. Peter's own blue, kept as an **accent only**: it passes 3:1
+  non-text contrast on light/Paper surfaces (3.25:1) but fails on warm Surface (2.96:1).
+  Use it for large decorative details and focus indicators on light backgrounds only;
+  never for normal-size text or on the warm Surface band.
+- **Ivory `#FDFBF4`** — near-white for text on the deep-blue bands.
+- **Amber `#A9652F`** — candle accent for eyebrows and small labels (darkened from the
+  original for AA).
+
+### Palette 1 (historical) — Contemporary & Forest
+
+Predecessor of the current palette: same warm ivory ground, but with a **deep evergreen
+`#2F4A3E`** in place of deep blue, `paper #F8F3EA / surface #EFE6D4 / stone #E4D9C3`,
+overlay `#2F4A3E`, and no separate Brand token. Superseded by Palette 2; kept for reference
+and easy reversion.
 
 ## Colors
 
-- **Paper** — the home ground: warm ivory behind almost everything.
-- **Surface** — a soft, deeper ivory used for cards and tinted bands.
+- **Paper** — the home ground: warm cream behind almost everything.
+- **Surface** — a deeper warm cream used for cards and the footer band.
 - **Stone** — a muted taupe for thin rules, dividers, and quiet fills.
 - **Ink** — a warm near-black for body text (high contrast on Paper).
-- **Evergreen** — the primary: buttons, key headings, the hero band, the footer. Conveys
-  stability, welcome, and heritage. Paired with white/ivory text it meets AA.
-- **Amber** — a single warm accent for eyebrows, small labels, and highlights. Used sparingly.
+- **Evergreen (deep parish blue)** — the primary: buttons, key bands, footer headings/links.
+  With ivory/white text it meets AA.
+- **Brand (St. Peter's blue)** — accent and accessible UI detail on light surfaces only.
+- **Amber** — a single warm accent for eyebrows, small labels, and highlights, used sparingly.
 
 ## Typography
 
@@ -126,6 +162,32 @@ elements only — buttons are full pill; cards and small frames use rounded.md.
   (Plan your visit, Worship).
 - **button-secondary** — outline in evergreen, for secondary actions.
 - **card** — Surface background, rounded corners, generous padding; used for the nav cards.
+
+## Footer
+
+The default Twenty Twenty-Five footer is replaced by a custom accessible block pattern in the
+child theme: `parts/footer.html`, rendered on the warm **Surface** ground with deep-blue
+(slug `evergreen`) headings and links.
+
+- **Statement** — the parish identity line, "Serving God together, Acting with compassion,
+  Proclaiming hope," centered in Fraunces at the top of the footer.
+- **Three columns, balanced on desktop, stacked on mobile**:
+  1. **Parish & contact** — name, address (3041 Mississauga Rd, Mississauga ON L5L 0B7),
+     telephone (`tel:`), directions link, and office/connect detail.
+  2. **Inclusion** — the **Progress Pride flag** and "All are welcome." The flag is a real
+     SVG asset, not emoji or AI-generated.
+  3. **Visit & connect** — visitor actions (Newsletter, Contact us) and social links
+     (Facebook, Instagram, YouTube), then a brand/copyright line "© 2026".
+
+### Supplying a flag asset
+
+The prototype ships a genuine Wikimedia intersex-inclusive **Progress Pride flag SVG** at
+`wp-content/themes/stpeters-anglican/assets/images/progress-pride-flag.svg` with a
+meaningful `alt="Progress Pride flag"`. To use the parish's own official flag instead,
+supply an **SVG or high-resolution PNG** (ideally a vector for crisp scaling; ~150px display
+width), commit it to the same `assets/images/` path, and reference it from the footer's
+`wp-block-image` block — swap the `src` URL in `parts/footer.html`. Keep the descriptive `alt`
+text. A flat-design progress flag is preferred over a photo so it reads clearly at small size.
 
 ## Do's and Don'ts
 
