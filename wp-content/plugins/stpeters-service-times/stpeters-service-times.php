@@ -318,12 +318,15 @@ function stp_worship_times_render( $attributes = array(), $content = '' ) {
 	}
 	$lines = array();
 	foreach ( $rows as $row ) {
-		$time   = '<strong>' . esc_html( $row['time'] ) . '</strong>';
-		$rite   = esc_html( $row['rite'] );
-		$mode   = esc_html( stp_service_times_display_mode( $row['mode'] ) );
+		$time    = '<strong>' . esc_html( $row['time'] ) . '</strong>';
+		$rite    = esc_html( $row['rite'] );
+		$mode    = esc_html( stp_service_times_display_mode( $row['mode'] ) );
 		$lines[] = $time . ' · ' . $rite . ' · ' . $mode;
 	}
-	return '<p class="stp-service-line">' . implode( '<br>', $lines ) . '</p>';
+	/* A single block-level wrapper (carries the block's own class) so the list
+	   sits centered in its band via the theme's .wp-block-stpeters-worship-times
+	   rule, instead of inheriting the parent group's full-bleed flow layout. */
+	return '<div class="wp-block-stpeters-worship-times"><p class="stp-service-line">' . implode( '<br>', $lines ) . '</p></div>';
 }
 
 /**
