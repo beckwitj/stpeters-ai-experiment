@@ -260,3 +260,26 @@ formality, and any sense of being an announcements board.
 WordPress will be the authoritative source for parish stories, events and announcements. Content should be reusable across the website, weekly email and social media, with editorial discretion over what is distributed, when, and through which channels.
 
 Newsletter and social media integration will be considered after the core website and post-authoring workflow are established. Avoid unnecessary dependence on any particular commercial service.
+
+### Worship times — single source, staff-maintainable
+
+Sunday worship times must be easy for parish staff to update **without editing any page**, and must come from **one place**. Service times, the NUMBER of Sunday services, and their TYPE all vary, and must not be hard-coded into page copy.
+
+Defining examples (2026):
+- **9:15 am — BAS — hybrid**
+- **11:00 am — BCP — hybrid**
+- **8:00 am — BCP** (all 8:00 services use the BCP) — **hybrid on the first Sunday of each month**, **Zoom on the other Sundays**.
+
+Each record stores the service's **time**, **type** (BAS/BCP), and **mode** (Zoom / hybrid / in-person).
+
+**Deliberately no repeat-schedule engine:** the roster is revised by hand when needed. A service may carry a short optional plain-text note (e.g. "1st Sunday of month", "2nd Sunday") purely for staff readability — it is NOT parsed or computed into any calendar. An automatic "nth Sunday" mechanism is intentionally out of scope: a simple, visible manual revision point is more likely to be kept current (and less likely to be silently wrong) than an automated schedule staff forget to maintain.
+
+**Staff workflow:** a single admin editing surface (one Settings-style screen, or one maintenance post/block) is the canonical store. Everywhere worship times render on the site — homepage, "Plan your visit", and any future page — uses the **same dynamic block fed from that store**, so a change is made once and propagates to every display. No page-by-page editing and no duplicated copy.
+
+Any block that reflects this (worship-times bands) must therefore be a **dynamic, server-rendered block reading the shared source**, not a static block pasted into multiple pages.
+
+**Naming (decided):** the internal, staff-facing admin screen is called **"Service Times"** — *service* is what a maintainer maintains. A visitor-facing label, if ever needed, may use **"Worship"**, which reads better to site visitors; the two terms are not interchangeable in the same UI. If a visitor-facing label is chosen, note it here.
+
+**Implementation note:** delivered as a separate plugin, `stpeters-service-times` — a top-level "Service Times" menu (wp-admin sidebar), an option-backed roster store, and a public `stp_service_times()` getter. A dynamic front-end block (`stpeters/worship-times`) that reads that store is the next step, and is what the homepage and "Plan your visit" will use.
+
+**Open question (staff access):** the admin screen currently requires `manage_options` (administrators only) via `STP_SERVICE_TIMES_CAPABILITY`. Confirm whether parish staff users (e.g. Editors) should maintain times; if so, set that constant (e.g. `edit_pages`) in wp-config so it deploys everywhere.

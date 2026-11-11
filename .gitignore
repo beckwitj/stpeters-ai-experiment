@@ -11,6 +11,7 @@
 !/wp-content/themes/
 /wp-content/plugins/*
 !/wp-content/plugins/stpeters-events/
+!/wp-content/plugins/stpeters-service-times/
 # Scratch content for import tests; not source.
 /wp-content/plugins/stpeters-events/tmp/
 /wp-content/themes/*
