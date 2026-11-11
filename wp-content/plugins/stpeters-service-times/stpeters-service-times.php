@@ -262,6 +262,18 @@ function stp_service_times_admin_page() {
  *
  * @param string $hook Current admin page hook.
  */
+/**
+ * Version string for a plugin asset, from the file's mtime so the URL changes
+ * whenever the file changes (cache-busting without a manual purge or URL edit).
+ *
+ * @param string $rel_path Path relative to the plugin dir, e.g. '/assets/admin.js'.
+ * @return string
+ */
+function stp_service_times_asset_version( $rel_path ) {
+	$mtime = filemtime( plugin_dir_path( __FILE__ ) . ltrim( $rel_path, '/' ) );
+	return ( false !== $mtime ) ? (string) $mtime : '0.1.0';
+}
+
 function stp_service_times_admin_assets( $hook ) {
 	if ( 'toplevel_page_stp-service-times' !== $hook ) {
 		return;
@@ -270,7 +282,7 @@ function stp_service_times_admin_assets( $hook ) {
 		'stp-service-times-admin',
 		plugin_dir_url( __FILE__ ) . 'assets/admin.js',
 		array(),
-		'0.1.0',
+		stp_service_times_asset_version( '/assets/admin.js' ),
 		true
 	);
 }
@@ -352,7 +364,7 @@ function stp_worship_times_editor_assets() {
 		'stp-worship-times-block',
 		plugin_dir_url( __FILE__ ) . 'assets/block.js',
 		array( 'wp-blocks', 'wp-element', 'wp-server-side-render', 'wp-i18n' ),
-		'0.1.0',
+		stp_service_times_asset_version( '/assets/block.js' ),
 		true
 	);
 }

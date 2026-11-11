@@ -5,6 +5,21 @@
  * @package stpeters-anglican
  */
 
+/**
+ * Version string for a child-theme asset, based on the file's mtime so the URL
+ * changes whenever the file changes — this busts browser caches (Safari in
+ * particular) automatically without any manual purge or URL change, and keeps
+ * the site host-independent.
+ *
+ * @param string $rel_path Path relative to the stylesheet directory, e.g. '/style.css'.
+ * @return string
+ */
+function stp_anglican_asset_version( $rel_path ) {
+	$path = get_stylesheet_directory() . $rel_path;
+	$mtime = filemtime( $path );
+	return ( false !== $mtime ) ? (string) $mtime : wp_get_theme()->get( 'Version' );
+}
+
 add_action( 'wp_enqueue_scripts', function () {
 	// Parents that enqueue their stylesheet via get_stylesheet_uri() would load
 	// the child's near-empty style.css instead — enqueue the parent's directly.
@@ -18,7 +33,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		'stpeters-anglican-style',
 		get_stylesheet_directory_uri() . '/style.css',
 		array( 'twentytwentyfive-parent-style' ),
-		wp_get_theme()->get( 'Version' )
+		stp_anglican_asset_version( '/style.css' )
 	);
 } );
 
