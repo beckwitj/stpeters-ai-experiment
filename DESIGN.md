@@ -282,4 +282,6 @@ Any block that reflects this (worship-times bands) must therefore be a **dynamic
 
 **Implementation note:** delivered as a separate plugin, `stpeters-service-times` — a top-level "Service Times" menu (wp-admin sidebar), an option-backed roster store, and a public `stp_service_times()` getter. A dynamic front-end block (`stpeters/worship-times`) that reads that store is the next step, and is what the homepage and "Plan your visit" will use.
 
+**Schema (decided 2026-11):** a service carries only **time · rite · mode**. A per-service note field was prototyped, then **dropped** — with no visitor-visible nuance it felt like an unneeded extra feature ("one more feature" instinct), and a single `mode` already carries the primary value (e.g. `zoom` for 8:00, the majority of Sundays). Week-to-week nuance (e.g. "hybrid on the first Sunday, otherwise Zoom") is deliberately **not modeled** — no schedule engine — staff revise the roster itself when reality changes.
+
 **Open question (staff access):** the admin screen currently requires `manage_options` (administrators only) via `STP_SERVICE_TIMES_CAPABILITY`. Confirm whether parish staff users (e.g. Editors) should maintain times; if so, set that constant (e.g. `edit_pages`) in wp-config so it deploys everywhere.

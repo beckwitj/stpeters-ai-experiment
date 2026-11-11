@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       St. Peter's Service Times
- * Description:       Single source of truth for Sunday service times. Provides a top-level "Service Times" admin screen (wp-admin sidebar) where parish staff maintain the roster — time, rite, mode, optional note — in one place, and exposes stp_service_times() for a future dynamic front-end block. Deliberately NO repeat-schedule engine: staff revise the data by hand when it changes.
+ * Description:       Single source of truth for Sunday service times. Provides a top-level "Service Times" admin screen (wp-admin sidebar) where parish staff maintain the roster — time, rite, mode — in one place, and exposes stp_service_times() for a future dynamic front-end block. Deliberately NO repeat-schedule engine: staff revise the data by hand when it changes.
  * Version:           0.1.0
  * Author:            St. Peter's Anglican Church
  * Text Domain:       stpeters-service-times
@@ -40,31 +40,27 @@ function stp_service_times_allowed_modes() {
 }
 
 /**
- * Default roster (2026 example, per DESIGN.md). The 8:00 service varies by
- * week; because we deliberately avoid a schedule engine, the variation lives
- * in the note (display-only).
+ * Default roster (2026 example, per DESIGN.md). Only a primary mode is
+ * modeled; week-to-week nuance is deliberately not (no schedule engine).
  *
- * @return array[] List of rows with keys: time, rite, mode, note.
+ * @return array[] List of rows with keys: time, rite, mode.
  */
 function stp_service_times_defaults() {
 	return array(
 		array(
 			'time' => '8:00 am',
 			'rite' => 'BCP',
-			'mode' => 'hybrid',
-			'note' => 'Hybrid on the first Sunday of the month; Zoom on other Sundays.',
+			'mode' => 'zoom',
 		),
 		array(
 			'time' => '9:15 am',
 			'rite' => 'BAS',
 			'mode' => 'hybrid',
-			'note' => '',
 		),
 		array(
 			'time' => '11:00 am',
 			'rite' => 'BCP',
 			'mode' => 'hybrid',
-			'note' => '',
 		),
 	);
 }
@@ -80,10 +76,9 @@ function stp_service_times_sanitize_row( $row, $index ) {
 	$row = is_array( $row ) ? $row : array();
 
 	$time = isset( $row['time'] ) ? sanitize_text_field( wp_unslash( (string) $row['time'] ) ) : '';
-	$note = isset( $row['note'] ) ? sanitize_text_field( wp_unslash( (string) $row['note'] ) ) : '';
 
-	if ( '' === $time && '' === $note ) {
-		return null; // Entirely empty row: drop it.
+	if ( '' === $time ) {
+		return null; // Empty row: drop it.
 	}
 
 	$rite = isset( $row['rite'] ) ? sanitize_key( (string) $row['rite'] ) : 'BAS';
@@ -100,7 +95,6 @@ function stp_service_times_sanitize_row( $row, $index ) {
 		'time' => $time,
 		'rite' => $rite,
 		'mode' => $mode,
-		'note' => $note,
 	);
 }
 
@@ -182,7 +176,6 @@ function stp_service_times_row_markup( $index, $row ) {
 		. '<td><input type="text" name="stp_service_times[' . esc_attr( $index ) . '][time]" value="' . esc_attr( $row['time'] ) . '" class="regular-text" placeholder="e.g. 8:00 am" /></td>'
 		. '<td><select name="stp_service_times[' . esc_attr( $index ) . '][rite]">' . $rite_opts . '</select></td>'
 		. '<td><select name="stp_service_times[' . esc_attr( $index ) . '][mode]">' . $mode_opts . '</select></td>'
-		. '<td><input type="text" name="stp_service_times[' . esc_attr( $index ) . '][note]" value="' . esc_attr( $row['note'] ) . '" class="regular-text stp-st-note" placeholder="optional — e.g. 1st Sunday only" /></td>'
 		. '<td><button type="button" class="button-link stp-st-remove" aria-label="Remove service">Remove</button></td>'
 		. '</tr>';
 }
@@ -234,7 +227,6 @@ function stp_service_times_admin_page() {
 						<th scope="col" style="width:26%"><?php esc_html_e( 'Time', 'stpeters-service-times' ); ?></th>
 						<th scope="col" style="width:14%"><?php esc_html_e( 'Rite', 'stpeters-service-times' ); ?></th>
 						<th scope="col" style="width:17%"><?php esc_html_e( 'Mode', 'stpeters-service-times' ); ?></th>
-						<th scope="col"><?php esc_html_e( 'Note (optional, display only)', 'stpeters-service-times' ); ?></th>
 						<th scope="col"><?php esc_html_e( '', 'stpeters-service-times' ); ?></th>
 					</tr>
 				</thead>
@@ -258,7 +250,7 @@ function stp_service_times_admin_page() {
 
 		<template id="stp-service-times-row-tpl">
 			<?php
-			echo stp_service_times_row_markup( 0, array( 'time' => '', 'rite' => 'BAS', 'mode' => 'hybrid', 'note' => '' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo stp_service_times_row_markup( 0, array( 'time' => '', 'rite' => 'BAS', 'mode' => 'hybrid' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			?>
 		</template>
 	</div>
