@@ -113,6 +113,19 @@ Tags: full-site-editing, block-patterns, block-styles, wide-blocks, accessibilit
 	color: var(--wp--preset--color--stone);
 }
 
+/* === worship-times dynamic block (stpeters/worship-times) === */
+/* Renders one line per service: <strong>time</strong> · rite · mode. Large so
+   it leads the band; centered to match the original static paragraph. Color is
+   inherited, so the evergreen band keeps its ivory through .on-dark. */
+.stp-service-line {
+	font-size: var(--wp--preset--font-size--large);
+	text-align: center;
+	margin-block: 0.4rem 0;
+}
+.stp-service-line strong {
+	font-weight: 600;
+}
+
 /* === hero: content-aware height, not a rigid value === */
 .hero-cover {
 	min-height: 56vh; /* mobile proportions kept */

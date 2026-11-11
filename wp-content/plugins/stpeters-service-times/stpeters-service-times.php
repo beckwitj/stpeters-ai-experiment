@@ -275,3 +275,82 @@ function stp_service_times_admin_assets( $hook ) {
 	);
 }
 add_action( 'admin_enqueue_scripts', 'stp_service_times_admin_assets' );
+
+/* ----------------------------------------------------------------------- */
+/* Front-end dynamic block: stpeters/worship-times                          */
+/* ----------------------------------------------------------------------- */
+
+/**
+ * Human-label a stored mode for display.
+ *
+ * 'zoom' is the Zoom product name (capitals); 'hybrid' and 'in person' are
+ * lowercase adverbs. The rest of the stored value passes through as-is.
+ *
+ * @param string $mode Stored mode (zoom|hybrid|in-person).
+ * @return string Display label.
+ */
+function stp_service_times_display_mode( $mode ) {
+	switch ( $mode ) {
+		case 'zoom':
+			return 'Zoom';
+		case 'in-person':
+			return 'in person';
+		default:
+			return $mode; // 'hybrid' and anything else.
+	}
+}
+
+/**
+ * Render the worship-times block. One line per service: bold time, then
+ * " · rite · mode". Wrapped in a single paragraph with <br> separators so the
+ * rows read as a tight, scannable list (same look as the original homepage
+ * band). The visual presentation (size, centering, on-dark color) lives in the
+ * child theme's style.css under .stp-service-line.
+ *
+ * @param array  $attributes Block attributes.
+ * @param string $content    Inner blocks content (unused).
+ * @return string Markup, or empty when no services are defined.
+ */
+function stp_worship_times_render( $attributes = array(), $content = '' ) {
+	$rows = stp_service_times();
+	if ( empty( $rows ) ) {
+		return '';
+	}
+	$lines = array();
+	foreach ( $rows as $row ) {
+		$time   = '<strong>' . esc_html( $row['time'] ) . '</strong>';
+		$rite   = esc_html( $row['rite'] );
+		$mode   = esc_html( stp_service_times_display_mode( $row['mode'] ) );
+		$lines[] = $time . ' · ' . $rite . ' · ' . $mode;
+	}
+	return '<p class="stp-service-line">' . implode( '<br>', $lines ) . '</p>';
+}
+
+/**
+ * Register the block and its editor-only script.
+ */
+function stp_worship_times_register_block() {
+	register_block_type(
+		'stpeters/worship-times',
+		array(
+			'render_callback' => 'stp_worship_times_render',
+			'attributes'      => array(),
+		)
+	);
+}
+add_action( 'init', 'stp_worship_times_register_block' );
+
+/**
+ * Enqueue the block's editor script so the block editor recognizes it as a
+ * dynamic block (save returns null; the preview is server-rendered).
+ */
+function stp_worship_times_editor_assets() {
+	wp_enqueue_script(
+		'stp-worship-times-block',
+		plugin_dir_url( __FILE__ ) . 'assets/block.js',
+		array( 'wp-blocks', 'wp-element', 'wp-server-side-render', 'wp-i18n' ),
+		'0.1.0',
+		true
+	);
+}
+add_action( 'enqueue_block_editor_assets', 'stp_worship_times_editor_assets' );
