@@ -113,6 +113,23 @@ expressed as a static block attribute, a server-side hook on
 3. Administer via WP-CLI (Studio's SQLite stores make `wp db query` unavailable; use
    `wp post list`, `option get`, etc.).
 
+## Page layout checkpoints
+
+Approved page layouts can be saved as block-content snapshots under
+`wp-content/themes/stpeters-anglican/content/`. These are recovery sources only:
+WordPress still renders and edits the page stored in its database, and changing a
+snapshot does not automatically update the page. Git does not back up the database
+or media uploads.
+
+- `content/plan-your-visit.html`: approved full-gutter-width card grid, with
+  4 / 2 / 1 columns at 1186px / 600px breakpoints (shared child-theme CSS).
+
+To restore a checkpoint, first validate its blocks on the running site, then use
+Studio's WP-CLI tool to run `post update <page-id> <snapshot-path>`. The local
+Plan your visit page ID at this checkpoint is 82; confirm the ID on other sites.
+Keep its `page-no-title` page template and the custom service-times plugin active.
+Images referenced by a snapshot must already exist in that site's media library.
+
 ## Version control scope
 `.gitignore` whitelists only **this theme**, **this plugin**, and **`README.md`**.
 WordPress core, wp-config.php (credentials), the SQLite database, uploads, and Studio

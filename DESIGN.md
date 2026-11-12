@@ -160,6 +160,16 @@ other exactly at every width, so cards and lists stay aligned):
   columns carry the root gutter (targeted with `.wp-block-columns.alignwide:has(.is-style-card)`;
   the footer has its own `.alignwide` rule). Inline spacing stays OUT of the block so the
   gutter scales with the viewport like every other section.
+- **Plan your visit — Good to know grid** — a full-width constrained section supplies
+  the shared root gutters; its local `wideSize: 100%` lets the `alignwide` card grid
+  fill the viewport minus those gutters, matching the Home card row's broad footprint.
+  This deliberately overrides the usual 1180px cap for this section only. Native
+  grid settings retain 4 columns and a 22px block gap; scoped component media queries
+  in style.css use 2 equal columns below 1186px and 1 below 600px. No 3+1 layout.
+  The four-column threshold is derived from `4 × 260 + 3 × 22 + 2 × 40 = 1186px`.
+  At 1920px, each card is `(1920 - 80 - 66) / 4 = 443.5px` wide, with 40px outer
+  gutters rather than large centered margins. Gutter padding is applied only once,
+  on the section. Home remains on Columns pending review of this trial.
 - **Parish-life activity list** — the Query Loop is a centered `66rem` (1056px) content
   column with the root-gutter padding, and each card fills it (no separate narrow cap), so
   titles and dates never touch the edge on mobile and cards unlock a comfortable ~976px on
