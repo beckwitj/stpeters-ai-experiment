@@ -153,13 +153,15 @@ the page its structure. Generous vertical padding (spacing.lg/xl) so no section 
 
 Horizontally, full-bleed sections keep their tint (or image) to the viewport edge while the
 content inside is inset with the **root gutter `clamp(1.25rem, 4vw, 2.5rem)`** — 20px at a
-390px phone, ~31px at a tablet. Three full-bleed blocks apply this in CSS (matching each
-other exactly at every width, so cards and lists stay aligned):
+390px phone, ~31px at a tablet. Card sections use native constrained-group gutters;
+activity lists and footer columns retain their CSS gutter treatments:
 
-- **Nav-card grid** — the four-way “Worship / Plan your visit / Events / Stories” card
-  columns carry the root gutter (targeted with `.wp-block-columns.alignwide:has(.is-style-card)`;
-  the footer has its own `.alignwide` rule). Inline spacing stays OUT of the block so the
-  gutter scales with the viewport like every other section.
+- **Home nav-card grid (approved)** — the four-way “Worship / Plan your visit /
+  Events / Stories” cards now use the same native Grid container and scoped 4 / 2 / 1
+  breakpoints as Plan your visit. Its full-width constrained section has local
+  `wideSize: 100%` and supplies one set of native root gutters. Text and links are
+  unchanged. `content/home.html` is the approved recovery snapshot. The Plan your
+  visit checkpoint was committed separately before the Home change was applied.
 - **Plan your visit — Good to know grid** — a full-width constrained section supplies
   the shared root gutters; its local `wideSize: 100%` lets the `alignwide` card grid
   fill the viewport minus those gutters, matching the Home card row's broad footprint.
@@ -169,7 +171,7 @@ other exactly at every width, so cards and lists stay aligned):
   The four-column threshold is derived from `4 × 260 + 3 × 22 + 2 × 40 = 1186px`.
   At 1920px, each card is `(1920 - 80 - 66) / 4 = 443.5px` wide, with 40px outer
   gutters rather than large centered margins. Gutter padding is applied only once,
-  on the section. Home remains on Columns pending review of this trial.
+  on the section. Approved and committed before applying the same treatment to Home.
 - **Parish-life activity list** — the Query Loop is a centered `66rem` (1056px) content
   column with the root-gutter padding, and each card fills it (no separate narrow cap), so
   titles and dates never touch the edge on mobile and cards unlock a comfortable ~976px on
