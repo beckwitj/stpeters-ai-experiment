@@ -100,6 +100,63 @@ expressed as a static block attribute, a server-side hook on
 > publishing/editing a Post with the right category updates every Query Loop surface
 > automatically. No one edits layouts, templates, or theme files to publish content.
 
+## Service Times roster
+
+The Sunday service roster is a **single source of truth** maintained on one screen and
+displayed on every page that carries the **Worship Times** block (Home and
+the Plan your visit page). Saving there updates both pages — no page editing needed.
+
+### Staff guide (whoever edits times)
+- **Where to edit:** in the WordPress admin, open the **Service Times** menu item. It is
+a dedicated form, not the post/page editor.
+- **Each service** is one row with three fields: **Time**, **Service** (BCP Service /
+  BCP Communion / BCP Morning Prayer / BCP Evening Prayer / BAS Eucharist), and
+  **How to attend** (Online / In-person / Online and In-person). Use *Add service*
+for more rows and *Remove* to drop one — the list is revised by hand when it
+changes; nothing is auto-scheduled. A Sunday can have any number of services;
+saving always stores exactly the rows shown, so a 4-service Sunday followed by a
+2-service one leaves nothing behind.
+- **The first-Sunday exception:** there is no scheduling engine. Instead, describe a
+  recurring variation in the optional **Visitor note** box on the same screen, e.g.
+  *"On the first Sunday of the month the 8 am service is also held in person."* The note
+  renders directly under the times with the rest of the roster.
+- **After saving, check both pages:** the Home page and the *Plan your visit* page — then
+  you are done. Every other surface uses those same pages, so no other page needs editing.
+
+### Maintainer notes
+- **Data location:** the saved roster lives in the WordPress database, two options under
+  `wp_options`: **`stp_service_times`** (the rows) and **`stp_service_times_note`** (the
+  visitor note). Git stores only the plugin code and the built-in example defaults; a
+  saved roster is not in Git.
+- **Back up / restore:** back up the site database (`sqls` side of a Studio push/export),
+  which carries the two options. Restoring a backup restores the roster. To reset to the
+  example defaults, delete `stp_service_times` from the database.
+- **Block placements:** the `stpeters/worship-times` block appears once on each of two
+  pages (Home = page 55, Plan your visit = page 82 on the local prototype). Both render
+  from the same roster, so there is only one set of times to maintain.
+- **Editing permission:** Editors and Administrators can edit by default
+  (capability `edit_pages`); Authors and below cannot. This is a provisional
+  default — reviewed again later. To change who maintains times, define
+  `STP_SERVICE_TIMES_CAPABILITY` (e.g. `'edit_posts'` for Authors too, or
+  `'manage_options'` for admins only) in `wp-config.php` before the plugin loads.
+- **Customizing the selectable values:** the five service types and three ways to
+  attend are plain maps of *slug → display label* (so a rename or addition never breaks
+  saved data). They can be changed without editing the plugin, via the filters
+  `stp_service_times_service_types` and `stp_service_times_attendance_modes` in a small
+  snippet — e.g. in the child theme's `functions.php` or an mu-plugin:
+
+  ```php
+  add_filter( 'stp_service_times_service_types', function ( $types ) {
+      $types['bas-communion'] = 'BAS Communion'; // add a type
+      unset( $types['bcp-service'] );            // retire one
+      return $types;
+  } );
+  ```
+
+  Anything added this way immediately appears in the admin dropdown and on the site.
+- **If the plugin were removed:** the block renders no fallback HTML, so the times would
+disappear from both pages; the underlying options and saved roster would remain intact.
+
 ## Custom code footprint
 - `stpeters-events` plugin: the only non-trivial custom code (~meta registration + the
   date-filter hook + block variations + save-time default).

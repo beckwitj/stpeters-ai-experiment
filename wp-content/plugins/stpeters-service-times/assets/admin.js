@@ -32,12 +32,12 @@
 	}
 
 	/**
-	 * Re-key a row's form fields to a given index and wire its remove button.
+	 * Wire a row's remove button. Kept separate from rebind so server-rendered
+	 * rows can have their button wired WITHOUT re-keying: their server-assigned
+	 * indices (0,1,2…) are already correct and unique. Re-keying them all to 0
+	 * would collapse every row onto one form key and lose rows on save.
 	 */
-	function rebind( tr, index ) {
-		Array.prototype.forEach.call( tr.querySelectorAll( '[name]' ), function ( el ) {
-			el.name = el.name.replace( /stp_service_times\[\d+\]/, 'stp_service_times[' + index + ']' );
-		} );
+	function wireRemove( tr ) {
 		var removeBtn = tr.querySelector( '.stp-st-remove' );
 		if ( removeBtn ) {
 			removeBtn.addEventListener( 'click', function () {
@@ -46,9 +46,19 @@
 		}
 	}
 
-	// Remove buttons on server-rendered rows.
+	/**
+	 * Re-key a row's form fields to a given index and wire its remove button.
+	 */
+	function rebind( tr, index ) {
+		Array.prototype.forEach.call( tr.querySelectorAll( '[name]' ), function ( el ) {
+			el.name = el.name.replace( /stp_service_times\[\d+\]/, 'stp_service_times[' + index + ']' );
+		} );
+		wireRemove( tr );
+	}
+
+	// Wire remove buttons on server-rendered rows, keeping their indices.
 	Array.prototype.forEach.call( tbody.querySelectorAll( '.stp-st-row' ), function ( tr ) {
-		rebind( tr, 0 ); // Re-key is idempotent for already-correct names.
+		wireRemove( tr );
 	} );
 
 	addBtn.addEventListener( 'click', function () {

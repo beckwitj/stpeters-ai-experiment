@@ -134,6 +134,16 @@ Tags: full-site-editing, block-patterns, block-styles, wide-blocks, accessibilit
 	font-weight: 600;
 }
 
+/* Visitor-visible note under the roster (e.g. first-Sunday qualifier).
+   Inherits the band's ivory text; centered and quiet so it reads as a
+   supporting line below the times. */
+.stp-service-note {
+	text-align: center;
+	font-size: var(--wp--preset--font-size--small);
+	max-width: 42rem;
+	margin: 0.9rem auto 0;
+}
+
 /* === hero: content-aware height, not a rigid value === */
 .hero-cover {
 	min-height: 56vh; /* mobile proportions kept */
