@@ -180,6 +180,9 @@ or media uploads.
 
 - `content/plan-your-visit.html`: approved full-gutter-width card grid, with
   4 / 2 / 1 columns at 1186px / 600px breakpoints (shared child-theme CSS).
+- `content/events.html`: approved Events page (`/events`, page 107) — a
+  no-title designed page: full-width evergreen hero + an upcoming-events Query
+  Loop (`stpSurface: upcoming`, soonest first, capped at 20). Local page 107.
 
 To restore a checkpoint, first validate its blocks on the running site, then use
 Studio's WP-CLI tool to run `post update <page-id> <snapshot-path>`. The local

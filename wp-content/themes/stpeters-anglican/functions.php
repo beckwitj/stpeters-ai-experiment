@@ -87,6 +87,6 @@ add_filter( 'render_block', function ( $block_content, $parsed_block ) {
 		return $block_content;
 	}
 	$ts   = strtotime( $raw . ' 12:00:00 UTC' );
-	$date = ( false === $ts ) ? esc_html( $raw ) : esc_html( wp_date( 'F j, Y', $ts ) );
+	$date = ( false === $ts ) ? esc_html( $raw ) : esc_html( wp_date( 'l, F j, Y', $ts ) );
 	return '<p class="activity-date"><time datetime="' . esc_attr( $raw ) . '">' . $date . '</time></p>';
 }, 10, 2 );

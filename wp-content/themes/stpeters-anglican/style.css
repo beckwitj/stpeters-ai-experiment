@@ -200,6 +200,29 @@ Tags: full-site-editing, block-patterns, block-styles, wide-blocks, accessibilit
 	color: var(--wp--preset--color--evergreen);
 	margin: 0 0 10px;
 }
+/* /events page: event card — day-date lead-in, tighter vertical padding. */
+.event-item {
+	padding-top: clamp(16px, 2vw, 20px);
+	padding-bottom: clamp(16px, 2vw, 20px);
+}
+.event-item .activity-date {
+	text-transform: uppercase;
+	letter-spacing: 0.07em;
+	font-weight: 600;
+	margin: 0 0 0.5rem;
+}
+.event-item .wp-block-post-title {
+	margin: 0 0 0.5rem;
+}
+.event-item .wp-block-post-excerpt {
+	margin: 0;
+}
+.event-item .wp-block-post-excerpt__more-link {
+	font-size: var(--wp--preset--font-size--small);
+	font-weight: 600;
+	color: var(--wp--preset--color--evergreen);
+	text-decoration: underline;
+}
 .activity-media {
 	min-width: 0;
 }

@@ -1,0 +1,35 @@
+<!-- wp:group {"align":"full","className":"on-dark","style":{"spacing":{"padding":{"top":"clamp(3.5rem, 9vw, 6rem)","bottom":"clamp(3.5rem, 9vw, 6rem)"}}},"backgroundColor":"evergreen","layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignfull on-dark has-evergreen-background-color has-background" style="padding-top:clamp(3.5rem, 9vw, 6rem);padding-bottom:clamp(3.5rem, 9vw, 6rem)"><!-- wp:paragraph {"className":"stp-eyebrow","style":{"typography":{"textAlign":"center"}}} -->
+<p class="has-text-align-center stp-eyebrow">St. Peter's Anglican Church · Erindale</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":1,"style":{"typography":{"textAlign":"center"}},"fontSize":"x-large"} -->
+<h1 class="wp-block-heading has-text-align-center has-x-large-font-size">What's on at St. Peter's</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph {"className":"has-medium-font-size","style":{"typography":{"textAlign":"center"}}} -->
+<p class="has-text-align-center has-medium-font-size">Worship services and community events — everything coming up, soonest first.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:group -->
+
+<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"clamp(4rem, 10vw, 7rem)","bottom":"clamp(4rem, 10vw, 7rem)"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignfull" style="padding-top:clamp(4rem, 10vw, 7rem);padding-bottom:clamp(4rem, 10vw, 7rem)"><!-- wp:query {"queryId":21,"query":{"inherit":false,"postType":"post","perPage":20,"orderBy":"meta_value","metaKey":"event_date","stpSurface":"upcoming","order":"ASC"}} -->
+<div class="wp-block-query"><!-- wp:post-template -->
+<!-- wp:group {"className":"is-style-card event-item","layout":{"type":"default"}} -->
+<div class="wp-block-group is-style-card event-item"><!-- wp:paragraph {"metadata":{"bindings":{"content":{"source":"core/post-meta","args":{"key":"event_date"}}}},"className":"activity-date"} -->
+<p class="activity-date"></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:post-title {"level":3,"isLink":true,"fontSize":"large"} /-->
+
+<!-- wp:post-excerpt {"moreText":"Read more →","showMoreOnNewLine":false,"excerptLength":22} /--></div>
+<!-- /wp:group -->
+<!-- /wp:post-template -->
+
+<!-- wp:query-no-results -->
+<!-- wp:paragraph -->
+<p>No events scheduled right now — check back soon.</p>
+<!-- /wp:paragraph -->
+<!-- /wp:query-no-results --></div>
+<!-- /wp:query --></div>
+<!-- /wp:group -->
