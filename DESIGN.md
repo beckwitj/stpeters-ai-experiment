@@ -71,12 +71,15 @@ deliberately split into three types, each with its own home and publishing rule:
 - **Events** — dated, open-to-attend, worth putting on a calendar: recitals, All
   Souls services, dinners, retreats, classes. Stored as **posts in the `events`
   category** with an `event_date`, listed on the **`/events`** page soonest-first.
-  A post can additionally be tagged **`Highlights`** to surface it on the Home feed.
+  An editor can additionally assign the **`Highlights` category** to surface an
+  event on the Home feed.
 - **Notices / Announcements** — time- or deadline-sensitive but *not* "come to
   this" calendar items: a coat-drive's last day, a Remembrance Book deadline, a
   volunteer call. These are **not** calendar events and stay **off the Events
-  page** (and Home) to avoid the bulletin-board effect. A dedicated
-  News/Announcements surface is a deliberate future option, not yet built.
+  page**. A welcoming, public-interest announcement may be selected for Home
+  using the **`Highlights` category**; routine notices do not automatically
+  appear there. A dedicated News/Announcements surface remains a future option,
+  not yet built.
 - **Ministries / persistent info** — always true, no date: what Pastoral Care is,
   how to volunteer. These live as **static pages**.
 
@@ -353,11 +356,19 @@ home for **public-facing event posts**; it is not a notice board.
 
 ### Home — curated Highlights feed (built 2026-11)
 
-The Home "Something for you — parish highlights" strip is a **curated subset** of
-events, not a rolling feed of everything. A dedicated **`Highlights` category** is
-the opt-in tag: an editor ticks it on an event they want a first-time visitor to
-notice. The Home Query Loop shows the **most recent three Highlighted events** by
-event date, newest first, stable (no display-until expiry). **Regular services
-and internal meetings are excluded by construction** — they are never tagged
-Highlights. The full Events page still holds everything (its strict lifecycle);
-Home is the human-curated headline slice.
+The Home "Something for you — parish highlights" strip is a **curated selection
+of posts**, not an events-only feed or a rolling feed of everything. Editors
+assign the **`Highlights` category** to public-facing events, welcoming
+announcements, or other posts worth a first-time visitor's attention. The query
+filters only by Highlights and shows **three posts, newest publication first**;
+it has no event-date requirement or display-until expiry. An occurrence date is
+shown when an item has one; announcements do not need an invented event date.
+
+Keep regular services, internal meetings, and routine administrative notices out
+of Highlights by **editorial choice**, not an automatic exclusion rule. Editors
+remove the category when an item no longer belongs on Home. The Events page
+retains its separate upcoming-event query and lifecycle unchanged.
+
+The redundant "See all events →" link beneath Highlights is omitted because the
+selection is broader than events. The Home Events card and "See what's on this
+season →" link remain the routes to the Events page.
