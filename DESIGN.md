@@ -63,6 +63,28 @@ the church voice and character; a humanist sans (Source Sans 3) keeps long text 
 readable. The layout is calm and roomy, never a cluttered bulletin board: welcome first,
 worship up front, then clear paths in, and a modest glimpse of parish life.
 
+## Content Model — three kinds of parish content
+
+To keep the site from sliding back into a bulletin board, parish content is
+deliberately split into three types, each with its own home and publishing rule:
+
+- **Events** — dated, open-to-attend, worth putting on a calendar: recitals, All
+  Souls services, dinners, retreats, classes. Stored as **posts in the `events`
+  category** with an `event_date`, listed on the **`/events`** page soonest-first.
+  A post can additionally be tagged **`Highlights`** to surface it on the Home feed.
+- **Notices / Announcements** — time- or deadline-sensitive but *not* "come to
+  this" calendar items: a coat-drive's last day, a Remembrance Book deadline, a
+  volunteer call. These are **not** calendar events and stay **off the Events
+  page** (and Home) to avoid the bulletin-board effect. A dedicated
+  News/Announcements surface is a deliberate future option, not yet built.
+- **Ministries / persistent info** — always true, no date: what Pastoral Care is,
+  how to volunteer. These live as **static pages**.
+
+Rule of thumb: *if it has a date you'd put on a calendar → event; if it has a
+deadline but isn't an event → notice; if it's always true → page.* The Sunday
+service times themselves are neither — they belong to the worship-time roster,
+not the event feed.
+
 ## Palette
 
 This file tracks **Palette 2 — Warm & Traditional** as the current theme. **Palette 1 —
@@ -282,9 +304,9 @@ Defining examples (2026):
 - **11:00 am — BCP — hybrid**
 - **8:00 am — BCP** (all 8:00 services use the BCP) — **hybrid on the first Sunday of each month**, **Zoom on the other Sundays**.
 
-Each record stores the service's **time**, **type** (BAS/BCP), and **mode** (Zoom / hybrid / in-person).
+Each record stores the service's **time**, **service** (the BCP/BAS family), and **how to attend** (Online / In-person / both).
 
-**Deliberately no repeat-schedule engine:** the roster is revised by hand when needed. A service may carry a short optional plain-text note (e.g. "1st Sunday of month", "2nd Sunday") purely for staff readability — it is NOT parsed or computed into any calendar. An automatic "nth Sunday" mechanism is intentionally out of scope: a simple, visible manual revision point is more likely to be kept current (and less likely to be silently wrong) than an automated schedule staff forget to maintain.
+**Deliberately no repeat-schedule engine:** the roster is revised by hand when needed. Week-to-week nuance is expressed by one **roster-level, visitor-visible note** shown under the times on every display (e.g. the first-Sunday arrangement); it is plain text, NOT parsed or computed into any calendar. An automatic "nth Sunday" mechanism is intentionally out of scope: a simple, visible manual revision point is more likely to be kept current (and less likely to be silently wrong) than an automated schedule staff forget to maintain.
 
 **Staff workflow:** a single admin editing surface (one Settings-style screen, or one maintenance post/block) is the canonical store. Everywhere worship times render on the site — homepage, "Plan your visit", and any future page — uses the **same dynamic block fed from that store**, so a change is made once and propagates to every display. No page-by-page editing and no duplicated copy.
 
@@ -292,14 +314,50 @@ Any block that reflects this (worship-times bands) must therefore be a **dynamic
 
 **Naming (decided):** the internal, staff-facing admin screen is called **"Service Times"** — *service* is what a maintainer maintains. A visitor-facing label, if ever needed, may use **"Worship"**, which reads better to site visitors; the two terms are not interchangeable in the same UI. If a visitor-facing label is chosen, note it here.
 
-**Implementation note:** delivered as a separate plugin, `stpeters-service-times` — a top-level "Service Times" menu (wp-admin sidebar), an option-backed roster store, a public `stp_service_times()` getter, and a dynamic front-end block (`stpeters/worship-times`) that reads that store and renders **time · rite · mode**. **Built 2026-11:** the block now powers the homepage worship band *and* the "Plan your visit" page, so a change in the Service Times screen updates every display at once. Presentation lives in the child theme (`.stp-service-line`); the plugin stays data + render.
+**Implementation note:** delivered as a separate plugin, `stpeters-service-times` — a top-level "Service Times" menu (wp-admin sidebar), an option-backed roster store, a public `stp_service_times()` getter, and a dynamic front-end block (`stpeters/worship-times`) that reads that store and renders **time · service · how-to-attend**. **Built 2026-11:** the block now powers the homepage worship band *and* the "Plan your visit" page, so a change in the Service Times screen updates every display at once. Presentation lives in the child theme (`.stp-service-line`); the plugin stays data + render.
 
-**Schema (decided 2026-11):** a service carries only **time · rite · mode**. A per-service note field was prototyped, then **dropped** — with no visitor-visible nuance it felt like an unneeded extra feature ("one more feature" instinct), and a single `mode` already carries the primary value (e.g. `zoom` for 8:00, the majority of Sundays). Week-to-week nuance (e.g. "hybrid on the first Sunday, otherwise Zoom") is deliberately **not modeled** — no schedule engine — staff revise the roster itself when reality changes.
+**Schema (revised 2026-11):** each service carries **time · service ·
+how-to-attend**. `service` uses a fixed vocabulary — BCP Service, BCP Communion,
+BCP Morning Prayer, BCP Evening Prayer, BAS Eucharist — and `how-to-attend` is
+Online, In-person, or Online and In-person. Both are stored as **stable slugs**
+mapped to display labels, and the option lists are **filterable** so the parish
+can extend them without editing the plugin (renaming a label never breaks saved
+data). Week-to-week nuance is still deliberately **not modeled** — no schedule
+engine — but a **roster-level, visitor-visible note** (a short plain-text line
+shown under the times on every display) is available for a recurring qualifier
+such as the first-Sunday arrangement. A per-service note was considered and
+kept out; the single roster note stays to "one feature."
 
 **Per-Sunday specifics live elsewhere (decided 2026-11):** the roster is a *simple listing of times only*. Content that is unique to each individual Sunday — the Sunday of the Church Year (e.g. "Fourteenth Sunday after Pentecost"), that Sunday's online/Zoom join link, that service's bulletin (often an HTML document) — is **not** a roster field. It can't be: a fixed set of repeating times can't hold a Zoom link and bulletin that differ by date. That information lives on a "worship" destination page reached via a **"More about worship →"** link, and is maintained per Sunday there. Zoom session ID/password were also considered and rejected as roster fields: the session ID is already inside the join URL, and the password rides along in its `?pwd=` — both public join material, not credentials to store.
 
-**Open question (staff access):** the admin screen currently requires `manage_options` (administrators only) via `STP_SERVICE_TIMES_CAPABILITY`. Confirm whether parish staff users (e.g. Editors) should maintain times; if so, set that constant (e.g. `edit_pages`) in wp-config so it deploys everywhere.
+**Staff access (decided 2026-11, provisional):** the admin screen defaults to
+**Editors+** (capability `edit_pages`) via `STP_SERVICE_TIMES_CAPABILITY`, so
+parish Editors can maintain times while Authors and below cannot. Flagged as a
+provisional default to revisit; the constant remains overridable in wp-config
+(e.g. `manage_options` for admins only, or `edit_posts` to include Authors).
 
 ### "Plan your visit" page (built 2026-11)
 
 Slug `plan-your-visit`, uses the **no-title template** (`page-no-title`) with a designed hero. Sections: **hero** (welcome + "See service times" / "Get directions" buttons) → **Getting here** (address + parking cards, Maps link) → **Sunday services** (the `stpeters/worship-times` dynamic block on the evergreen band) → **What to expect** (open paragraphs about the prayer books and service rhythm) → **Good to know** (card grid: Accessibility · Families and children · Come as you are · After the service) → **Any questions?** (office phone/email). Contact and accessibility details are **placeholders for staff to confirm**. **Decided: full-text open sections, not an accordion** — reassurance on a visit-planning page is strongest when it's visible without clicks, and the card grid breaks it into scannable chunks without hiding content.
+
+### Events page (built 2026-11)
+
+Slug `events`, uses the **no-title template** with a designed evergreen hero
+("What's on at St. Peter's"). The body is a single **upcoming-events Query Loop**
+(`stpSurface: upcoming`): event posts with `event_date` today or later,
+**soonest first**, capped at 20. Each event renders as a shaded card — bold
+uppercase **day-date** (day-of-week computed from the event date), linked
+**title**, **abstract** (the post's excerpt), and a small inline **"Read more →"**.
+There is deliberately **no calendar-grid matrix layout**. This is the canonical
+home for **public-facing event posts**; it is not a notice board.
+
+### Home — curated Highlights feed (built 2026-11)
+
+The Home "Something for you — parish highlights" strip is a **curated subset** of
+events, not a rolling feed of everything. A dedicated **`Highlights` category** is
+the opt-in tag: an editor ticks it on an event they want a first-time visitor to
+notice. The Home Query Loop shows the **most recent three Highlighted events** by
+event date, newest first, stable (no display-until expiry). **Regular services
+and internal meetings are excluded by construction** — they are never tagged
+Highlights. The full Events page still holds everything (its strict lifecycle);
+Home is the human-curated headline slice.
