@@ -1,0 +1,35 @@
+<!-- wp:paragraph -->
+<p>Faith, community, and the people of the parish.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>Prototype page:</strong> this list will show posts assigned to the Stories category, newest publication first. No parish stories have been assigned yet.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:query {"queryId":31,"query":{"inherit":false,"postType":"post","perPage":6,"order":"DESC","orderBy":"date","taxQuery":{"include":{"category":[5]}}}} -->
+<div class="wp-block-query"><!-- wp:post-template -->
+<!-- wp:group {"className":"activity-item","layout":{"type":"default"}} -->
+<div class="wp-block-group activity-item"><!-- wp:post-title {"level":2,"isLink":true,"fontSize":"large"} /-->
+
+<!-- wp:post-date {"format":"F j, Y","fontSize":"small"} /-->
+
+<!-- wp:post-excerpt {"moreText":"Read more →","showMoreOnNewLine":false,"excerptLength":24} /--></div>
+<!-- /wp:group -->
+<!-- /wp:post-template -->
+
+<!-- wp:query-pagination {"layout":{"type":"flex","justifyContent":"space-between"}} -->
+<!-- wp:query-pagination-previous /-->
+
+<!-- wp:query-pagination-next /-->
+<!-- /wp:query-pagination -->
+
+<!-- wp:query-no-results -->
+<!-- wp:paragraph -->
+<p>No stories to share here yet — please check back soon.</p>
+<!-- /wp:paragraph -->
+<!-- /wp:query-no-results --></div>
+<!-- /wp:query -->
+
+<!-- wp:paragraph -->
+<p>Explore <a href="/ministries/">ministries</a> or see <a href="/events/">upcoming events</a>.</p>
+<!-- /wp:paragraph -->

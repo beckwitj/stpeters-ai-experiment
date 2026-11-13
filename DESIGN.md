@@ -317,7 +317,7 @@ Any block that reflects this (worship-times bands) must therefore be a **dynamic
 
 **Naming (decided):** the internal, staff-facing admin screen is called **"Service Times"** — *service* is what a maintainer maintains. A visitor-facing label, if ever needed, may use **"Worship"**, which reads better to site visitors; the two terms are not interchangeable in the same UI. If a visitor-facing label is chosen, note it here.
 
-**Implementation note:** delivered as a separate plugin, `stpeters-service-times` — a top-level "Service Times" menu (wp-admin sidebar), an option-backed roster store, a public `stp_service_times()` getter, and a dynamic front-end block (`stpeters/worship-times`) that reads that store and renders **time · service · how-to-attend**. **Built 2026-11:** the block now powers the homepage worship band *and* the "Plan your visit" page, so a change in the Service Times screen updates every display at once. Presentation lives in the child theme (`.stp-service-line`); the plugin stays data + render.
+**Implementation note:** delivered as a separate plugin, `stpeters-service-times` — a top-level "Service Times" menu (wp-admin sidebar), an option-backed roster store, a public `stp_service_times()` getter, and a dynamic front-end block (`stpeters/worship-times`) that reads that store and renders **time · service · how-to-attend**. **Built 2026-11:** the block powers the homepage worship band, "Plan your visit", and the Worship page, so a change in the Service Times screen updates every display at once. Presentation lives in the child theme (`.stp-service-line`); the plugin stays data + render.
 
 **Schema (revised 2026-11):** each service carries **time · service ·
 how-to-attend**. `service` uses a fixed vocabulary — BCP Service, BCP Communion,
@@ -372,3 +372,30 @@ retains its separate upcoming-event query and lifecycle unchanged.
 The redundant "See all events →" link beneath Highlights is omitted because the
 selection is broader than events. The Home Events card and "See what's on this
 season →" link remain the routes to the Events page.
+
+### Supporting destinations — local starter pages (2026-11)
+
+Worship (`/worship/`), Ministries (`/ministries/`), Newsletter (`/newsletter/`),
+Contact Us (`/contact/`), and Stories (`/stories/`) now exist as published pages
+on the local prototype only. They use the ordinary page template: shared header,
+one template-supplied h1, a constrained reading column, and the shared footer.
+They do not introduce a new visual treatment. Each clearly identifies unfinished
+content; no invented ministry directory, weekly resources, or staff details.
+
+- **Worship** reads the shared service roster (still sample values), reserves a
+  section for confirmed weekly worship resources, and links to Ministries.
+- **Ministries** is an evergreen directory placeholder, reachable from Worship,
+  Contact, and Stories; individual ministry descriptions await parish input.
+- **Newsletter** is a destination only. Signup, subscriber collection, and email
+  sending are not enabled; the curated-digest workflow remains to be confirmed.
+- **Contact Us** reuses the address, telephone, and email already on the prototype,
+  explicitly marked for parish confirmation. It does not add a contact form.
+- **Stories** uses a core Query Loop filtered to the Stories category, six posts
+  per page, newest publication first, with pagination and an empty state. It has
+  no event-date requirement and does not change Events or Highlights queries.
+
+Footer Newsletter and Contact links point to their respective pages, replacing
+`#` placeholders. About Us and Announcements have not been created; their content
+and navigation remain future work. A shared header navigation menu is still
+pending. Starter-page block snapshots live alongside Home and Events snapshots;
+page records and category assignments remain database content, not theme data.

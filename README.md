@@ -103,8 +103,8 @@ expressed as a static block attribute, a server-side hook on
 ## Service Times roster
 
 The Sunday service roster is a **single source of truth** maintained on one screen and
-displayed on every page that carries the **Worship Times** block (Home and
-the Plan your visit page). Saving there updates both pages — no page editing needed.
+displayed on every page that carries the **Worship Times** block (Home,
+Plan your visit, and Worship). Saving there updates all three — no page editing needed.
 
 ### Staff guide (whoever edits times)
 - **Where to edit:** in the WordPress admin, open the **Service Times** menu item. It is
@@ -120,8 +120,8 @@ saving always stores exactly the rows shown, so a 4-service Sunday followed by a
   recurring variation in the optional **Visitor note** box on the same screen, e.g.
   *"On the first Sunday of the month the 8 am service is also held in person."* The note
   renders directly under the times with the rest of the roster.
-- **After saving, check both pages:** the Home page and the *Plan your visit* page — then
-  you are done. Every other surface uses those same pages, so no other page needs editing.
+- **After saving, check all three displays:** Home, *Plan your visit*, and *Worship*.
+  All read the same roster; no page needs editing.
 
 ### Maintainer notes
 - **Data location:** the saved roster lives in the WordPress database, two options under
@@ -131,9 +131,9 @@ saving always stores exactly the rows shown, so a 4-service Sunday followed by a
 - **Back up / restore:** back up the site database (`sqls` side of a Studio push/export),
   which carries the two options. Restoring a backup restores the roster. To reset to the
   example defaults, delete `stp_service_times` from the database.
-- **Block placements:** the `stpeters/worship-times` block appears once on each of two
-  pages (Home = page 55, Plan your visit = page 82 on the local prototype). Both render
-  from the same roster, so there is only one set of times to maintain.
+- **Block placements:** the `stpeters/worship-times` block appears once on each of
+  three pages (Home = 55, Plan your visit = 82, Worship = 118 on the local prototype).
+  All render from the same roster, so there is only one set of times to maintain.
 - **Editing permission:** Editors and Administrators can edit by default
   (capability `edit_pages`); Authors and below cannot. This is a provisional
   default — reviewed again later. To change who maintains times, define
@@ -155,7 +155,7 @@ saving always stores exactly the rows shown, so a 4-service Sunday followed by a
 
   Anything added this way immediately appears in the admin dropdown and on the site.
 - **If the plugin were removed:** the block renders no fallback HTML, so the times would
-disappear from both pages; the underlying options and saved roster would remain intact.
+disappear from all three pages; the underlying options and saved roster would remain intact.
 
 ## Custom code footprint
 - `stpeters-events` plugin: the only non-trivial custom code (~meta registration + the
@@ -183,6 +183,33 @@ or media uploads.
 - `content/events.html`: approved Events page (`/events`, page 107) — a
   no-title designed page: full-width evergreen hero + an upcoming-events Query
   Loop (`stpSurface: upcoming`, soonest first, capped at 20). Local page 107.
+
+### Supporting-page starter snapshots (local, not yet approved for live publication)
+
+| Snapshot | Local page ID | URL |
+|---|---|---|
+| `content/worship.html` | 118 | `/worship/` |
+| `content/ministries.html` | 119 | `/ministries/` |
+| `content/newsletter.html` | 120 | `/newsletter/` |
+| `content/contact.html` | 121 | `/contact/` |
+| `content/stories.html` | 122 | `/stories/` |
+
+These five pages use the ordinary default page template (which supplies their h1),
+not `page-no-title`. All are published locally to resolve navigation; content needing
+confirmation is explicitly marked. The footer now links Newsletter and Contact to
+these destinations instead of `#`. Ministries has incoming links from Worship,
+Contact, and Stories. No header menu was added.
+
+Stories uses category `stories` (local term ID 5), six posts per page, newest
+publication first. On a different database, resolve the category slug and remap the
+query's term ID before validating/restoring. Category records and assignments are
+not backed up by these snapshots. Newsletter is a placeholder only: no subscription
+form, subscriber collection, or email sending is enabled. Contact details are reused
+from the prototype and await parish confirmation.
+
+About Us and Announcements do not exist yet. The unlinked Sample Page (2), draft
+Privacy Policy (3), and broken `/author/` link on the Hello world sample post remain
+cleanup items; none was deleted or changed in this batch.
 
 To restore a checkpoint, first validate its blocks on the running site, then use
 Studio's WP-CLI tool to run `post update <page-id> <snapshot-path>`. The local
